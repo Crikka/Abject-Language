@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/aferrand/dev/perso/Abject-Language/src/tools/countable.cc
+
+/home/aferrand/dev/perso/Abject-Language/src/tools/cref.cc
+

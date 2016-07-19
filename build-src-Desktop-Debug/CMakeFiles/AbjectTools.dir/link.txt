@@ -1,0 +1,2 @@
+/usr/bin/ar qc libAbjectTools.a  CMakeFiles/AbjectTools.dir/tools/cref.cc.o CMakeFiles/AbjectTools.dir/tools/countable.cc.o
+/usr/bin/ranlib libAbjectTools.a

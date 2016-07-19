@@ -1,0 +1,2 @@
+/usr/bin/ar qc libAbjectCompilerTools.a  CMakeFiles/AbjectCompilerTools.dir/compiler/parser/ast.cpp.o CMakeFiles/AbjectCompilerTools.dir/compiler/parser/parse.cpp.o
+/usr/bin/ranlib libAbjectCompilerTools.a
