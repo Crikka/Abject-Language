@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMetamodelCore.a  CMakeFiles/MetamodelCore.dir/metamodel/metamodel.cc.o CMakeFiles/MetamodelCore.dir/metamodel/module.cc.o CMakeFiles/MetamodelCore.dir/metamodel/modular.cc.o CMakeFiles/MetamodelCore.dir/metamodel/types.cc.o CMakeFiles/MetamodelCore.dir/metamodel/cfg/cfg.cc.o CMakeFiles/MetamodelCore.dir/metamodel/cfg/instructions.cc.o CMakeFiles/MetamodelCore.dir/metamodel/cfg/identifier.cc.o
-/usr/bin/ranlib libMetamodelCore.a

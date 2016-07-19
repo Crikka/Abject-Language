@@ -1,1 +1,0 @@
-/usr/bin/g++   -std=c++14  -g   CMakeFiles/AbjectC.dir/compilermain.cpp.o  -o AbjectC -rdynamic libAbjectCompilerTools.a -ltanuki 

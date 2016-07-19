@@ -1,1 +1,0 @@
-/usr/bin/g++   -std=c++14  -g   CMakeFiles/Onirism.dir/main.cpp.o  -o Onirism -rdynamic libMetamodelCore.a libAbjectTools.a 
