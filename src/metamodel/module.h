@@ -8,6 +8,8 @@ namespace abject {
 class Module : public Countable {
  public:
   static Module *LookFor(const std::string &identifier);
+  static Module *Core();
+
   ~Module();
 
  private:

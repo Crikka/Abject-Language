@@ -27,6 +27,13 @@ Module *Module::LookFor(const std::string &identifier) {
   return result;
 }
 
+// Static
+Module *Module::Core() {
+  static Module *core = LookFor("core");
+
+  return core;
+}
+
 Module::Module(const std::string &identifier) {
   identifier_.assign(identifier);
 }

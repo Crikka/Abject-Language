@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="Abject"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="clang"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v all"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Lethargy">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/Lethargy" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v Lethargy"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Lethargy/fast">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/Lethargy" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v Lethargy/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Onirism">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/Onirism" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v Onirism"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Onirism/fast">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/Onirism" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v Onirism/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v edit_cache"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="AbjectTools">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/libAbjectTools.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v AbjectTools"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="AbjectTools/fast">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/libAbjectTools.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v AbjectTools/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MetamodelCore">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/libMetamodelCore.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v MetamodelCore"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="MetamodelCore/fast">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/libMetamodelCore.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v MetamodelCore/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v rebuild_cache"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="AbjectC">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/AbjectC" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v AbjectC"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="AbjectC/fast">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/AbjectC" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v AbjectC/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="AbjectCompilerTools">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/libAbjectCompilerTools.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v AbjectCompilerTools"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="AbjectCompilerTools/fast">
+				<Option output="/home/crikka/dev/Abject-Language/build-src-Desktop-Default/libAbjectCompilerTools.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="clang"/>
+				<Compiler>
+					<Add directory="/home/crikka/dev/Abject-Language/build-src-Desktop-Default"/>
+					<Add directory="/home/crikka/dev/Abject-Language/src"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.1.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.1.1/../../../../include/c++/6.1.1/backward"/>
+					<Add directory="/usr/bin/../lib/clang/3.8.0/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/ninja -v AbjectCompilerTools/fast"/>
+					<CompileFile command="/usr/bin/ninja -v &quot;$file&quot;"/>
+					<Clean command="/usr/bin/ninja -v clean"/>
+					<DistClean command="/usr/bin/ninja -v clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/compiler/parser/ast.cpp">
+			<Option target="AbjectCompilerTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/compiler/parser/ast.h">
+			<Option target="AbjectCompilerTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/compiler/parser/parse.cpp">
+			<Option target="AbjectCompilerTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/compiler/parser/parse.h">
+			<Option target="AbjectCompilerTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/compilermain.cpp">
+			<Option target="AbjectC"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/execution/lethargy/interpreter.cc">
+			<Option target="Lethargy"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/execution/lethargy/interpreter.h">
+			<Option target="Lethargy"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/lethargy.cc">
+			<Option target="Lethargy"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/cfg/cfg.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/cfg/cfg.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/cfg/identifier.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/cfg/identifier.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/cfg/statements.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/cfg/statements.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/metamodel.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/metamodel.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/modular.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/modular.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/module.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/module.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/types.cc">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/metamodel/types.h">
+			<Option target="MetamodelCore"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/onirism.cc">
+			<Option target="Onirism"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/tools/countable.cc">
+			<Option target="AbjectTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/tools/countable.h">
+			<Option target="AbjectTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/tools/cref.cc">
+			<Option target="AbjectTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/tools/cref.h">
+			<Option target="AbjectTools"/>
+		</Unit>
+		<Unit filename="/home/crikka/dev/Abject-Language/src/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

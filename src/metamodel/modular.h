@@ -10,6 +10,8 @@ struct Modular {
   Modular(Module *module);
   virtual ~Modular();
 
+  Module *module() const;
+
  private:
   cref<Module> module_;
 };

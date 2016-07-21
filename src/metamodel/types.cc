@@ -4,15 +4,29 @@
 
 namespace abject {
 Artefact::Artefact(Module *module) : Modular(module) {}
-
 Artefact::~Artefact() {}
 
 Model::Model(Module *module) : Artefact(module) {}
-
 Model::~Model() {}
 
-Facet::Facet(Module *module) : Model(module) {}
+ArrayModel *Model::ArrayOf() { return new ArrayModel(this); }
 
+Facet::Facet(Module *module) : Model(module) {}
 Facet::~Facet() {}
+
+Model *ArrayModel::of() const { return of_.get(); }
+
+ArrayModel::ArrayModel(Model *of) : Model(of->module()), of_(of) {}
+ArrayModel::~ArrayModel() {}
+
+// Static
+String *String::Instance() {
+  static String *instance = new String();
+
+  return instance;
+}
+
+String::String() : Model(Module::Core()) {}
+String::~String() {}
 
 }  // namespace abject

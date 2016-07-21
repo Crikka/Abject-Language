@@ -5,10 +5,12 @@
 #include "metamodel/modular.h"
 
 namespace abject {
-  /**
- * @brief The Artefact class
- * Artefact is something like "Object" for OOP language.
- */
+class ArrayModel;
+
+/**
+*@brief The Artefact class
+*Artefact is something like "Object" for OOP language.
+*/
 class Artefact : public Modular, public Countable {
  public:
   Artefact(Module *module);
@@ -26,15 +28,41 @@ class Model : public Artefact {
   Model(Module *module);
   virtual ~Model();
 
+  ArrayModel *ArrayOf();
+
  private:
 };
 
 class Facet : public Model {
-public:
- Facet(Module *module);
- virtual ~Facet();
+ public:
+  Facet(Module *module);
+  virtual ~Facet();
 
-private:
+ private:
+};
+
+class ArrayModel : public Model {
+ public:
+  Model *of() const;
+
+  ~ArrayModel();
+
+ private:
+  ArrayModel(Model *of);
+
+  cref<Model> of_;
+
+  friend class Model;
+};
+
+// Primitive bellow
+class String : public Model {
+ public:
+  static String *Instance();
+  virtual ~String();
+
+ private:
+  String();
 };
 
 }  // namespace abject

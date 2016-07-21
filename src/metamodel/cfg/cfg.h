@@ -7,7 +7,7 @@
 #include <vector>
 
 namespace abject {
-struct Instruction;
+struct Statement;
 
 class CFG : public Countable {
  private:
@@ -15,14 +15,14 @@ class CFG : public Countable {
     Block *parent;
     std::vector<cref<Block>> children;
 
-    std::vector<std::unique_ptr<Instruction>> instructions;
+    std::vector<std::unique_ptr<Statement>> statements;
   };
 
  public:
   CFG();
   virtual ~CFG();
 
-  void Push(Instruction *instruction);
+  void Push(Statement *statement);
   void Branch();
   void Trunk();
 

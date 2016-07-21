@@ -1,6 +1,6 @@
 #include "metamodel/cfg/cfg.h"
 
-#include "metamodel/cfg/instructions.h"
+#include "metamodel/cfg/statements.h"
 
 namespace abject {
 CFG::CFG() : entry_(new Block), current_(entry_.get()) {
@@ -9,8 +9,8 @@ CFG::CFG() : entry_(new Block), current_(entry_.get()) {
 
 CFG::~CFG() {}
 
-void CFG::Push(Instruction *instruction) {
-  current_->instructions.emplace_back(instruction);
+void CFG::Push(Statement *statement) {
+  current_->statements.emplace_back(statement);
 }
 
 void CFG::Branch() {
