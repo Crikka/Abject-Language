@@ -1,8 +1,0 @@
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/Lethargy.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/Onirism.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/edit_cache.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/AbjectTools.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/MetamodelCore.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/rebuild_cache.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/AbjectC.dir
-/home/crikka/dev/Abject-Language/build-src-Desktop-Default/CMakeFiles/AbjectCompilerTools.dir
