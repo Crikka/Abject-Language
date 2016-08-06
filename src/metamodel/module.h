@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace abject {
+namespace ai {
 class Module : public Countable {
  public:
   static Module *LookFor(const std::string &identifier);
@@ -17,4 +17,4 @@ class Module : public Countable {
 
   std::string identifier_;
 };
-}  // namespace abject
+}  // namespace ai

@@ -11,8 +11,8 @@
 int main(int argc, char* argv[]) {
   // abject::parseFile("misc/examples/Simple.abj");
 
-  abject::CFG cfg;
-  cfg.Push(new abject::StringLiteral(new abject::Identifier{1, 2}, "foo"));
+  ai::CFG cfg;
+  cfg.Push(new ai::StringLiteral(new ai::Identifier{1, 2}, "foo"));
   cfg.Branch();
   cfg.Trunk();
 

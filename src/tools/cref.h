@@ -1,6 +1,6 @@
 #pragma once
 
-namespace abject {
+namespace ai {
 /**
  * The ref countable implementations
  */
@@ -33,4 +33,4 @@ struct cref {
  private:
   T* intern_;
 };
-}  // namespace abject
+}  // namespace ai

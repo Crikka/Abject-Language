@@ -2,7 +2,7 @@
 
 #include "tools/cref.h"
 
-namespace abject {
+namespace ai {
 class Module;
 
 struct Modular {
@@ -15,4 +15,4 @@ struct Modular {
  private:
   cref<Module> module_;
 };
-}  // namespace abject
+}  // namespace ai

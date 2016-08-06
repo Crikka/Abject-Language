@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 
-namespace abject {
+namespace ai {
 class Statement {
  public:
   enum Kind { kStringLiteral };
@@ -62,7 +62,7 @@ class StringLiteral : public Statement {
   std::unique_ptr<Identifier> var_;
   std::string value_;
 };
-}  // namespace abject
+}  // namespace ai
 
 template <typename TMemoryHandler>
 class ExecutionMachine {};

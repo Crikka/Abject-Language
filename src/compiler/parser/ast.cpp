@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-namespace abject {
+namespace ai {
 namespace ast {
 Program::Program() : Node() {}
 

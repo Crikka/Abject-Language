@@ -5,7 +5,7 @@
 
 #include "ast.h"
 
-namespace abject {
+namespace ai {
 /* -- Tokens -- */
 static tanuki::ref<tanuki::Fragment<ast::Program>> TokenMain();
 

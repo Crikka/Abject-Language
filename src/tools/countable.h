@@ -2,7 +2,7 @@
 
 #include <atomic>
 
-namespace abject {
+namespace ai {
 struct Countable {
   Countable() : ref_count_(0) {}
 
@@ -12,4 +12,4 @@ struct Countable {
   template <typename T>
   friend class cref;
 };
-}  // namespace abject
+}  // namespace ai

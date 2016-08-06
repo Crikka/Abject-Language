@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-namespace abject {
+namespace ai {
 struct Statement;
 
 class CFG : public Countable {
@@ -31,4 +31,4 @@ class CFG : public Countable {
   Block *current_;
 };
 
-}  // namespace abject
+}  // namespace ai

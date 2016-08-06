@@ -2,7 +2,7 @@
 
 #include "metamodel/cfg/statements.h"
 
-namespace abject {
+namespace ai {
 CFG::CFG() : entry_(new Block), current_(entry_.get()) {
   entry_->parent = nullptr;
 }
@@ -26,4 +26,4 @@ void CFG::Trunk() {
     current_ = current_->parent;
   }
 }
-}  // namespace abject
+}  // namespace ai

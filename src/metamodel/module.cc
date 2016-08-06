@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace abject {
+namespace ai {
 // Static
 Module *Module::LookFor(const std::string &identifier) {
   typedef std::unordered_map<std::string, cref<Module>> TCache;
@@ -40,4 +40,4 @@ Module::Module(const std::string &identifier) {
 
 Module::~Module() {}
 
-}  // namespace abject
+}  // namespace ai

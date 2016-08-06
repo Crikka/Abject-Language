@@ -4,7 +4,7 @@
 
 #include "metamodel/modular.h"
 
-namespace abject {
+namespace ai {
 class ArrayModel;
 
 /**
@@ -65,4 +65,4 @@ class String : public Model {
   String();
 };
 
-}  // namespace abject
+}  // namespace ai

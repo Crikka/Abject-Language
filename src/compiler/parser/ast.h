@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace abject {
+namespace ai {
 namespace ast {
 class Node;
 class Program;

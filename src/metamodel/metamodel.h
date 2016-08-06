@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace abject {
+namespace ai {
 class Model;
 
 class Metamodel {
@@ -12,4 +12,4 @@ class Metamodel {
  private:
   std::vector<cref<Model>> models_;
 };
-}  // namespace abject
+}  // namespace ai

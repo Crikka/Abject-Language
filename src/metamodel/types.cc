@@ -2,7 +2,7 @@
 
 #include "metamodel/module.h"
 
-namespace abject {
+namespace ai {
 Artefact::Artefact(Module *module) : Modular(module) {}
 Artefact::~Artefact() {}
 
@@ -29,4 +29,4 @@ String *String::Instance() {
 String::String() : Model(Module::Core()) {}
 String::~String() {}
 
-}  // namespace abject
+}  // namespace ai
