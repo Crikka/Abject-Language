@@ -2,7 +2,7 @@
 
 #include "metamodel/cfg/identifier.h"
 
-#include "tools/cref.h"
+#include "common/cref.h"
 
 #include <iostream>
 
@@ -63,8 +63,3 @@ class StringLiteral : public Statement {
   std::string value_;
 };
 }  // namespace ai
-
-template <typename TMemoryHandler>
-class ExecutionMachine {};
-
-struct MemoryHandler {};

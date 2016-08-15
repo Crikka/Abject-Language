@@ -9,13 +9,34 @@
 #include "metamodel/cfg/identifier.h"
 #include "metamodel/cfg/statements.h"
 
+#include "abstract/abstract.h"
+
+#include "execution/lethargy/executor.h"
+#include "execution/lethargy/interpreter.h"
+#include "execution/lethargy/memory.h"
+
 int main(int argc, char* argv[]) {
+  using namespace ai;
+
   // abject::parseFile("misc/examples/Simple.abj");
 
-  ai::CFG cfg;
-  cfg.Push(new ai::StringLiteral(new ai::Identifier{1, 2}, "foo"));
-  cfg.Branch();
-  cfg.Trunk();
+  cref<CFG> cfg(new CFG);
+  cfg->Push(new StringLiteral(new Identifier{1, 2}, "foo"));
+  cfg->Branch();
+  cfg->Trunk();
+
+  /*ai::AbstractDomain domain;
+  ai::Identifier id{1, 2};
+
+  domain.Let(id) < 6;
+  domain.Let(id) = 6;
+  domain.Let(id) < 6;*/
+
+  Memory memory(50);
+  MemoryView view(memory.View(10));
+
+  Executor executor(cfg, &view);
+  cref<Model> result = executor.Start();
 
   return 0;
 }

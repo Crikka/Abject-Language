@@ -1,6 +1,6 @@
 #include "module.h"
 
-#include "tools/cref.h"
+#include "common/cref.h"
 
 #include <string>
 #include <unordered_map>

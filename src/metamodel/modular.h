@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools/cref.h"
+#include "common/cref.h"
 
 namespace ai {
 class Module;

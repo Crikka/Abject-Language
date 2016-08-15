@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tools/countable.h"
+#include "common/countable.h"
 
 #include "metamodel/modular.h"
 

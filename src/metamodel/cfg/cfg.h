@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tools/countable.h"
-#include "tools/cref.h"
+#include "common/countable.h"
+#include "common/cref.h"
 
 #include <memory>
 #include <vector>
@@ -25,6 +25,8 @@ class CFG : public Countable {
   void Push(Statement *statement);
   void Branch();
   void Trunk();
+
+  Block *entry() const { return entry_.get(); }
 
  private:
   std::unique_ptr<Block> entry_;

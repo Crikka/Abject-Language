@@ -30,6 +30,8 @@ struct cref {
 
   T* operator->() { return intern_; }
 
+  operator T*() { return get(); }
+
  private:
   T* intern_;
 };

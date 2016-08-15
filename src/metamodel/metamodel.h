@@ -1,14 +1,18 @@
 #pragma once
 
-#include "tools/cref.h"
+#include "common/countable.h"
+#include "common/cref.h"
 
 #include <vector>
 
 namespace ai {
 class Model;
 
-class Metamodel {
+class Metamodel : public Countable {
  public:
+  Metamodel();
+  virtual ~Metamodel();
+
  private:
   std::vector<cref<Model>> models_;
 };
