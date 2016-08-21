@@ -18,6 +18,7 @@ add_library(${ABJECT_COMMON}
   common/cref.cc
   common/countable.cc
   common/memory.cc
+  common/murmur.cc
 )
 
 add_library(${ABJECT_METAMODEL_CORE}

@@ -15,6 +15,7 @@
 #include "execution/lethargy/interpreter.h"
 
 #include "common/memory.h"
+#include "common/murmur.h"
 
 int main(int argc, char* argv[]) {
   using namespace ai;
