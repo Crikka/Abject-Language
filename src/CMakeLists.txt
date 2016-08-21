@@ -1,5 +1,7 @@
 project(Abject)
 
+add_subdirectory(vendor/tanuki)
+
 # Names
 set(ABJECT_COMMON "AbjectCommon") # lib for common classes
 set(ABJECT_METAMODEL_CORE "MetamodelCore") # lib for metamodel
@@ -15,6 +17,7 @@ cmake_minimum_required(VERSION 2.8)
 add_library(${ABJECT_COMMON}
   common/cref.cc
   common/countable.cc
+  common/memory.cc
 )
 
 add_library(${ABJECT_METAMODEL_CORE}
@@ -53,7 +56,6 @@ add_executable(${ABJECT_LETHARGY}
 
     execution/lethargy/interpreter.cc
     execution/lethargy/executor.cc
-    execution/lethargy/memory.cc
 )
 
 # Common
@@ -63,7 +65,7 @@ set_target_properties(${ABJECT_COMMON} PROPERTIES
 )
 
 # Metamodel Core
-target_link_libraries(${ABJECT_METAMODEL_CORE} ${ABJECT_TOOLS})
+target_link_libraries(${ABJECT_METAMODEL_CORE} ${ABJECT_COMMON})
 set_target_properties(${ABJECT_METAMODEL_CORE} PROPERTIES
     LINKER_LANGUAGE CXX
     CXX_STANDARD 14

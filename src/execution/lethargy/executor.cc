@@ -1,6 +1,6 @@
 #include "execution/lethargy/executor.h"
 
-#include "execution/lethargy/memory.h"
+#include "common/memory.h"
 
 #include "metamodel/cfg/cfg.h"
 #include "metamodel/cfg/statements.h"
@@ -15,14 +15,19 @@ cref<Model> Executor::Start() {
   CFG::Block *block = cfg_->entry();
   for (const std::unique_ptr<Statement> &statement : block->statements) {
     switch (statement->kind()) {
-      case Statement::kStringLiteral: {
-        Identifier *left = statement->op<StringLiteral::Left>();
-        std::string *right = statement->op<StringLiteral::Right>();
+      case Statement::kReturn: {
 
-        mview_->Set(left->pos(), right);
+      }
+
+      case Statement::kStringLiteral: {
+        Identifier &left = statement->Op<StringLiteral::Left>();
+        const std::string &right = statement->Op<StringLiteral::Right>();
+
+        // mview_->AsArrayOfPointer().Set(left.pos(), &right);
       }
     }
-
-    return result;
   }
+
+  return result;
+}
 }  // namespace ai

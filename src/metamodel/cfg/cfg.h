@@ -10,7 +10,7 @@ namespace ai {
 struct Statement;
 
 class CFG : public Countable {
- private:
+ public:
   struct Block : public Countable {
     Block *parent;
     std::vector<cref<Block>> children;
@@ -18,7 +18,6 @@ class CFG : public Countable {
     std::vector<std::unique_ptr<Statement>> statements;
   };
 
- public:
   CFG();
   virtual ~CFG();
 

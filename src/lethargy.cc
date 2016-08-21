@@ -13,7 +13,8 @@
 
 #include "execution/lethargy/executor.h"
 #include "execution/lethargy/interpreter.h"
-#include "execution/lethargy/memory.h"
+
+#include "common/memory.h"
 
 int main(int argc, char* argv[]) {
   using namespace ai;
@@ -22,8 +23,9 @@ int main(int argc, char* argv[]) {
 
   cref<CFG> cfg(new CFG);
   cfg->Push(new StringLiteral(new Identifier{1, 2}, "foo"));
-  cfg->Branch();
-  cfg->Trunk();
+  cfg->Push(new Return(new Identifier{1, 2}));
+  /*cfg->Branch();
+  cfg->Trunk();*/
 
   /*ai::AbstractDomain domain;
   ai::Identifier id{1, 2};
@@ -33,7 +35,7 @@ int main(int argc, char* argv[]) {
   domain.Let(id) < 6;*/
 
   Memory memory(50);
-  MemoryView view(memory.View(10));
+  MemoryView view(memory.View());
 
   Executor executor(cfg, &view);
   cref<Model> result = executor.Start();
