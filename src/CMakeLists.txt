@@ -1,6 +1,7 @@
 project(Abject)
 
 add_subdirectory(vendor/tanuki)
+include_directories(vendor/tanuki)
 
 # Names
 set(ABJECT_COMMON "AbjectCommon") # lib for common classes
