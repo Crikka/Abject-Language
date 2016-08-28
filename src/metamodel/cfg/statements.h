@@ -1,7 +1,5 @@
 #pragma once
 
-#include "metamodel/cfg/identifier.h"
-
 #include "common/cref.h"
 #include "common/memory.h"
 
@@ -19,7 +17,7 @@ class Statement {
 
   template <typename T>
   typename T::Type &Op() {
-    return *(data_->View().AsArrayOfPointer().Get<typename T::Type>(T::Index));
+    return *(aop().Get<typename T::Type>(T::Index));
   }
 
   Kind kind() { return kind_; }
@@ -37,9 +35,7 @@ class Statement {
     }
   }
 
-  void store(size_t index, void *datum) {
-    data_->View().AsArrayOfPointer().Set(index, datum);
-  }
+  void store(size_t index, void *datum) { aop().Set(index, datum); }
 
  private:
   template <size_t N>
@@ -56,8 +52,10 @@ class Statement {
   void intern(typename TFirst::Type *first) {
     static_assert(TFirst::Index == N, "Invalid index for a statement!");
 
-    data_->View().AsArrayOfPointer().Set(N, first);
+    aop().Set(N, first);
   }
+
+  ArrayOfPointer aop() { return ArrayOfPointer(data_->View()); }
 
   std::unique_ptr<Memory> data_;
   Kind kind_;
@@ -67,36 +65,36 @@ class Return : public Statement {
  public:
   struct Value {
     constexpr static size_t Index = 0;
-    typedef Identifier Type;
+    typedef size_t Type;
   };
 
-  Return(Identifier *var) : Statement(kReturn), var_(var) {
-    init<Value>(var_.get());
-  }
+  Return(size_t var) : Statement(kReturn), var_(var) { init<Value>(&var_); }
 
  private:
-  std::unique_ptr<Identifier> var_;
+  size_t var_;
 };
 
-class StringLiteral : public Statement {
+template <typename T, Statement::Kind k>
+class Assignment : public Statement {
  public:
   struct Left {
     constexpr static size_t Index = 0;
-    typedef Identifier Type;
+    typedef size_t Type;
   };
 
   struct Right {
     constexpr static size_t Index = 1;
-    typedef const std::string Type;
+    typedef T Type;
   };
 
-  StringLiteral(Identifier *var, const std::string &value)
-      : Statement(kStringLiteral), var_(var), value_(value) {
-    init<Left, Right>(var_.get(), &value);
+  Assignment(size_t var, T &value) : Statement(k), var_(var), value_(value) {
+    init<Left, Right>(&var_, &value);
   }
 
  private:
-  std::unique_ptr<Identifier> var_;
-  std::string value_;
+  size_t var_;
+  T value_;
 };
+
+typedef Assignment<const std::string, Statement::kStringLiteral> StringLiteral;
 }  // namespace ai

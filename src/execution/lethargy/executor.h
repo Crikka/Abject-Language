@@ -4,16 +4,16 @@
 
 namespace ai {
 class CFG;
-class Model;
+class Artefact;
 class MemoryView;
 
 class Executor {
-public:
+ public:
   explicit Executor(CFG *cfg, MemoryView *mview);
 
-  cref<Model> Start();
+  cref<Artefact> Start();
 
-private:
+ private:
   cref<CFG> cfg_;
   MemoryView *mview_;
 };

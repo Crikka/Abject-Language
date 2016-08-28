@@ -9,21 +9,22 @@
 namespace ai {
 Executor::Executor(CFG *cfg, MemoryView *mview) : cfg_(cfg), mview_(mview) {}
 
-cref<Model> Executor::Start() {
-  cref<Model> result;
+cref<Artefact> Executor::Start() {
+  cref<Artefact> result;
+  ArrayOfPointer aop(*mview_);
 
   CFG::Block *block = cfg_->entry();
   for (const std::unique_ptr<Statement> &statement : block->statements) {
     switch (statement->kind()) {
       case Statement::kReturn: {
-
+        result = aop.Get<Artefact>(statement->Op<Return::Value>());
       }
 
       case Statement::kStringLiteral: {
-        Identifier &left = statement->Op<StringLiteral::Left>();
+        size_t &left = statement->Op<StringLiteral::Left>();
         const std::string &right = statement->Op<StringLiteral::Right>();
 
-        // mview_->AsArrayOfPointer().Set(left.pos(), &right);
+        // aop.Set(left, &right);
       }
     }
   }

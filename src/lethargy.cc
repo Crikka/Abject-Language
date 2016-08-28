@@ -23,8 +23,8 @@ int main(int argc, char* argv[]) {
   // abject::parseFile("misc/examples/Simple.abj");
 
   cref<CFG> cfg(new CFG);
-  cfg->Push(new StringLiteral(new Identifier{1, 2}, "foo"));
-  cfg->Push(new Return(new Identifier{1, 2}));
+  cfg->Push(new StringLiteral(2, "foo"));
+  cfg->Push(new Return(2));
   /*cfg->Branch();
   cfg->Trunk();*/
 
@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
   MemoryView view(memory.View());
 
   Executor executor(cfg, &view);
-  cref<Model> result = executor.Start();
+  cref<Artefact> result = executor.Start();
 
   return 0;
 }

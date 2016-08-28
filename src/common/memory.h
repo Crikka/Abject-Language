@@ -24,26 +24,10 @@ class Memory {
 };
 
 class MemoryView {
- private:
-  struct ArrayOfPointer {
-    template <typename T>
-    T *Get(size_t n) const {
-      return mview_->Get<T *>(n * ps);
-    }
-
-    void Set(size_t n, const void *something) {
-      mview_->Set(n * ps, something, ps);
-    }
-
-    explicit ArrayOfPointer(MemoryView *mview) : mview_(mview) {}
-
-   private:
-    MemoryView *mview_;
-    static constexpr size_t ps = sizeof(void *);
-  };
-
  public:
-  explicit MemoryView(char *data);
+  // Not explicit
+  MemoryView(char *data);
+  MemoryView(const MemoryView &other);
 
   template <typename T>
   T Get(size_t n) const {
@@ -53,8 +37,6 @@ class MemoryView {
   void Set(size_t n, const void *something, size_t length) {
     memcpy(data_ + n, something, length);
   }
-
-  ArrayOfPointer AsArrayOfPointer() { return ArrayOfPointer(this); }
 
 #define MemoryViewAutoSet(type) \
   void Set(size_t n, type something) { Set(n, &something, sizeof(type)); }
@@ -67,5 +49,22 @@ class MemoryView {
 
  private:
   char *data_;
+};
+
+struct ArrayOfPointer {
+  template <typename T>
+  T *Get(size_t n) const {
+    return mview_.Get<T *>(n * ps);
+  }
+
+  void Set(size_t n, const void *something) {
+    mview_.Set(n * ps, something, ps);
+  }
+
+  explicit ArrayOfPointer(MemoryView mview) : mview_(mview) {}
+
+ private:
+  MemoryView mview_;
+  static constexpr size_t ps = sizeof(void *);
 };
 }  // namespace ai
