@@ -18,6 +18,7 @@ cref<Artefact> Executor::Start() {
     switch (statement->kind()) {
       case Statement::kReturn: {
         result = aop.Get<Artefact>(statement->Op<Return::Value>());
+        break;
       }
 
       case Statement::kStringLiteral: {
@@ -25,6 +26,7 @@ cref<Artefact> Executor::Start() {
         const std::string &right = statement->Op<StringLiteral::Right>();
 
         // aop.Set(left, &right);
+        break;
       }
     }
   }

@@ -17,6 +17,8 @@
 #include "common/memory.h"
 #include "common/murmur.h"
 
+#include <set>
+
 int main(int argc, char* argv[]) {
   using namespace ai;
 
@@ -35,11 +37,22 @@ int main(int argc, char* argv[]) {
   domain.Let(id) = 6;
   domain.Let(id) < 6;*/
 
-  Memory memory(50);
+  /*Memory memory(50);
   MemoryView view(memory.View());
 
   Executor executor(cfg, &view);
-  cref<Artefact> result = executor.Start();
+  cref<Artefact> result = executor.Start();*/
+
+  std::set<uint64_t> set;
+
+  for (size_t i = 0; i < 10000000000; i++) {
+    uint64_t res;
+    MurmurHash3_x64_128(std::to_string(i).c_str(), 1, 0, &res);
+
+    if (!set.insert(res).second) {
+      std::cerr << "Collide : " << i << std::endl;
+    }
+  }
 
   return 0;
 }
