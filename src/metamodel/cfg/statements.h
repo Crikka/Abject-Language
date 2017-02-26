@@ -1,100 +1,81 @@
 #pragma once
 
-#include "common/cref.h"
-#include "common/memory.h"
-
 #include <iostream>
 
+#include <assert.h>
 #include <memory>
 #include <string>
 
+#include "common/cref.h"
+#include "common/memory.h"
+
 namespace ai {
+enum StKind { kStReturn, kStStringLiteral, kStIntegerLiteral };
+
+namespace {
+template <StKind kind>
+struct AsHelper {};
+}
+
+#define DeclareAs(type, kind) \
+  namespace {                 \
+  template <>                 \
+  struct AsHelper<kind> {     \
+    typedef type ReturnType;  \
+  };                          \
+  }
+
 class Statement {
  public:
-  enum Kind { kReturn, kStringLiteral };
-
   virtual ~Statement() = default;
 
-  template <typename T>
-  typename T::Type &Op() {
-    return *(aop().Get<typename T::Type>(T::Index));
-  }
+  StKind kind() const { return kind_; }
 
-  Kind kind() { return kind_; }
+  template <StKind kind>
+  typename AsHelper<kind>::ReturnType *As() {
+    assert(kind == kind_);
+
+    return static_cast<typename AsHelper<kind>::ReturnType *>(this);
+  }
 
  protected:
-  explicit Statement(Kind kind) : kind_(kind) {}
-
-  template <typename... TSomething>
-  void init(typename TSomething::Type *... args) {
-    static constexpr size_t length = sizeof...(TSomething);
-
-    if (length > 0) {
-      data_.reset(new Memory(length + sizeof(void *)));
-      recursive_intern<0, TSomething...>(args...);
-    }
-  }
-
-  void store(size_t index, void *datum) { aop().Set(index, datum); }
+  explicit Statement(StKind kind) : kind_(kind) {}
 
  private:
-  template <size_t N>
-  void recursive_intern() {}
-
-  template <size_t N, typename TFirst, typename... TRest>
-  void recursive_intern(typename TFirst::Type *first,
-                        typename TRest::Type *... rest) {
-    intern<N, TFirst>(first);
-    recursive_intern<N + 1, TRest...>(rest...);
-  }
-
-  template <size_t N, typename TFirst>
-  void intern(typename TFirst::Type *first) {
-    static_assert(TFirst::Index == N, "Invalid index for a statement!");
-
-    aop().Set(N, first);
-  }
-
-  ArrayOfPointer aop() { return ArrayOfPointer(data_->View()); }
-
-  std::unique_ptr<Memory> data_;
-  Kind kind_;
+  StKind kind_;
 };
 
 class Return : public Statement {
  public:
-  struct Value {
-    constexpr static size_t Index = 0;
-    typedef size_t Type;
-  };
+  Return(size_t value) : Statement(kStReturn), value_(value) {}
 
-  Return(size_t var) : Statement(kReturn), var_(var) { init<Value>(&var_); }
+  size_t value() const { return value_; }
 
  private:
-  size_t var_;
+  size_t value_;
 };
 
-template <typename T, Statement::Kind k>
+DeclareAs(Return, kStReturn);
+
+template <typename T, StKind k>
 class Assignment : public Statement {
  public:
-  struct Left {
-    constexpr static size_t Index = 0;
-    typedef size_t Type;
-  };
+  Assignment(size_t var, const T &value)
+      : Statement(k), var_(var), value_(value) {}
 
-  struct Right {
-    constexpr static size_t Index = 1;
-    typedef T Type;
-  };
-
-  Assignment(size_t var, T &value) : Statement(k), var_(var), value_(value) {
-    init<Left, Right>(&var_, &value);
-  }
+  size_t var() const { return var_; }
+  const T &value() const { return value_; }
 
  private:
   size_t var_;
   T value_;
 };
 
-typedef Assignment<const std::string, Statement::kStringLiteral> StringLiteral;
+typedef Assignment<const std::string, kStStringLiteral> StringLiteral;
+typedef Assignment<int, kStIntegerLiteral> IntegerLiteral;
+
+DeclareAs(StringLiteral, kStStringLiteral);
+DeclareAs(IntegerLiteral, kStIntegerLiteral);
+
+#undef DeclareAs
 }  // namespace ai

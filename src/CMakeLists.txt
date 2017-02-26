@@ -30,7 +30,7 @@ add_library(${ABJECT_METAMODEL_CORE}
   metamodel/types.cc
 
   # cfg
-  metamodel/cfg/cfg.cc
+  metamodel/cfg/code.cc
   metamodel/cfg/statements.cc
   metamodel/cfg/identifier.cc
 
@@ -58,6 +58,7 @@ add_executable(${ABJECT_LETHARGY}
 
     execution/lethargy/interpreter.cc
     execution/lethargy/executor.cc
+    execution/lethargy/runtime.cc
 )
 
 # Common

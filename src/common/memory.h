@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <functional>
+#include <iostream>
+
 namespace ai {
 class MemoryView;
 
@@ -31,7 +34,7 @@ class MemoryView {
 
   template <typename T>
   T Get(size_t n) const {
-    return reinterpret_cast<T>(data_[n]);
+    return reinterpret_cast<T>(data_ + n);
   }
 
   void Set(size_t n, const void *something, size_t length) {

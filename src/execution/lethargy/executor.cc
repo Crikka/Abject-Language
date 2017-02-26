@@ -2,35 +2,60 @@
 
 #include "common/memory.h"
 
-#include "metamodel/cfg/cfg.h"
+#include "metamodel/cfg/code.h"
 #include "metamodel/cfg/statements.h"
 #include "metamodel/types.h"
 
+#include "execution/lethargy/runtime.h"
+
+#include <vector>
+
 namespace ai {
-Executor::Executor(CFG *cfg, MemoryView *mview) : cfg_(cfg), mview_(mview) {}
+Executor::Executor() {}
 
-cref<Artefact> Executor::Start() {
-  cref<Artefact> result;
-  ArrayOfPointer aop(*mview_);
+rt::Value *Executor::Start(Code *code, size_t locals_count) {
+  rt::Value *result;
 
-  CFG::Block *block = cfg_->entry();
-  for (const std::unique_ptr<Statement> &statement : block->statements) {
+  std::vector<rt::Value *> locals(locals_count, nullptr);
+
+  for (const std::unique_ptr<Statement> &statement : code->statements()) {
     switch (statement->kind()) {
-      case Statement::kReturn: {
-        result = aop.Get<Artefact>(statement->Op<Return::Value>());
+      case kStReturn: {
+        Return *st_return = statement->As<kStReturn>();
+
+        result = locals[st_return->value()];
+        goto end;
+      }
+
+      case kStStringLiteral: {
+        StringLiteral *st_string = statement->As<kStStringLiteral>();
+
+        size_t left = st_string->var();
+        const std::string &right = st_string->value();
+
+        rt::Str *value = new rt::Str();
+        value->value = right;
+
+        locals[left] = value;
         break;
       }
 
-      case Statement::kStringLiteral: {
-        size_t &left = statement->Op<StringLiteral::Left>();
-        const std::string &right = statement->Op<StringLiteral::Right>();
+      case kStIntegerLiteral: {
+        IntegerLiteral *st_integer = statement->As<kStIntegerLiteral>();
 
-        // aop.Set(left, &right);
+        size_t left = st_integer->var();
+        int right = st_integer->value();
+
+        rt::Int *value = new rt::Int();
+        value->value = right;
+
+        locals[left] = value;
         break;
       }
     }
   }
 
+end:
   return result;
 }
 }  // namespace ai

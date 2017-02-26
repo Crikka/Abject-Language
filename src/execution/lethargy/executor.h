@@ -2,19 +2,23 @@
 
 #include "common/cref.h"
 
+#include <stddef.h>
+
 namespace ai {
-class CFG;
+namespace rt {
+struct Value;
+}  // namespace rt
+
+class Code;
 class Artefact;
 class MemoryView;
 
 class Executor {
  public:
-  explicit Executor(CFG *cfg, MemoryView *mview);
+  explicit Executor();
 
-  cref<Artefact> Start();
+  rt::Value *Start(Code *code, size_t locals_count);
 
  private:
-  cref<CFG> cfg_;
-  MemoryView *mview_;
 };
 }  // namespace ai
