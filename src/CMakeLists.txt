@@ -28,6 +28,7 @@ add_library(${ABJECT_METAMODEL_CORE}
   metamodel/module.cc
   metamodel/modular.cc
   metamodel/types.cc
+  metamodel/function.cc
 
   # cfg
   metamodel/cfg/code.cc

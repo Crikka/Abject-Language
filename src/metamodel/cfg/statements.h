@@ -5,12 +5,13 @@
 #include <assert.h>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "common/cref.h"
 #include "common/memory.h"
 
 namespace ai {
-enum StKind { kStReturn, kStStringLiteral, kStIntegerLiteral };
+enum StKind { kStReturn, kDirectCall, kStStringLiteral, kStIntegerLiteral };
 
 namespace {
 template <StKind kind>
@@ -56,6 +57,26 @@ class Return : public Statement {
 };
 
 DeclareAs(Return, kStReturn);
+
+class DirectCall : public Statement {
+ public:
+  DirectCall(size_t function_id, size_t var, const std::vector<size_t> &args)
+      : Statement(kDirectCall),
+        function_id_(function_id),
+        var_(var),
+        args_(args) {}
+
+  size_t function_id() const { return function_id_; }
+  size_t var() const { return var_; }
+  const std::vector<size_t> &args() const { return args_; }
+
+ private:
+  size_t function_id_;
+  size_t var_;
+  std::vector<size_t> args_;
+};
+
+DeclareAs(DirectCall, kDirectCall);
 
 template <typename T, StKind k>
 class Assignment : public Statement {

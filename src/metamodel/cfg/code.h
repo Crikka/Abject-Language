@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/countable.h"
 #include "common/cref.h"
+#include "common/unique.h"
 
 #include <memory>
 #include <vector>
@@ -9,18 +9,18 @@
 namespace ai {
 struct Statement;
 
-class Code : public Countable {
+class Code {
  public:
   Code();
   virtual ~Code();
 
   void Push(Statement *statement);
 
-  const std::vector<std::unique_ptr<Statement>> &statements() const {
+  const std::vector<unique<Statement>> &statements() const {
     return statements_;
   }
 
  private:
-  std::vector<std::unique_ptr<Statement>> statements_;
+  std::vector<unique<Statement>> statements_;
 };
 }  // namespace ai

@@ -1,24 +1,27 @@
 #pragma once
 
-#include "common/cref.h"
-
 #include <stddef.h>
+#include <vector>
+
+#include "common/cref.h"
+#include "common/unique.h"
 
 namespace ai {
 namespace rt {
 struct Value;
 }  // namespace rt
 
-class Code;
-class Artefact;
-class MemoryView;
+class Metamodel;
 
 class Executor {
  public:
-  explicit Executor();
+  explicit Executor(Metamodel *metamodel);
+  virtual ~Executor();
 
-  rt::Value *Start(Code *code, size_t locals_count);
+  rt::Value *Start(size_t function_id, const std::vector<rt::Value *> args);
 
  private:
+  struct Impl;
+  unique<Impl> impl;
 };
 }  // namespace ai
