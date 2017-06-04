@@ -1,172 +1,233 @@
-#include "parse.h"
+#include "compiler/parser/parse.h"
 
 #include <fstream>
 #include <iostream>
 
-#include "ast.h"
+#include <cassert>
+#include <cctype>
+#include <fstream>
+#include <sstream>
+#include <stack>
+
+#include "compiler/parser/ast.h"
 
 namespace ai {
-/* -- Tokens -- */
-static tanuki::ref<tanuki::Fragment<ast::Program>> TokenMain();
+template <typename T>
+struct ParsingResult {
+  bool ok = false;
+  T result;
+};
 
-/* Top Level */
-static tanuki::ref<tanuki::Fragment<ast::TopLevelContent>> TokenTop();
+typedef ParsingResult<std::string> StringParsingResult;
 
-static tanuki::ref<tanuki::Fragment<ast::Define>> TokenDefine();
-/* --------- */
+struct Parser {
+  typedef std::istream::pos_type pos_t;
 
-/* -- Type -- */
-static tanuki::ref<tanuki::Fragment<ast::Type>> TokenType();
-static tanuki::ref<tanuki::Fragment<ast::Type>> TokenAtomicType();
+  std::istream *is;
 
-static tanuki::ref<tanuki::Fragment<ast::StringType>> TokenStringType();
-/* ---------- */
+  Parser(std::istream *is) : is(is) {}
 
-/* -- Value -- */
-static tanuki::ref<tanuki::Fragment<ast::Value>> TokenValue();
+  StringParsingResult module();
+  StringParsingResult literal(const std::string &str);
+  StringParsingResult identifier();
 
-static tanuki::ref<tanuki::Fragment<ast::IntValue>> TokenIntValue();
-static tanuki::ref<tanuki::Fragment<ast::StringValue>> TokenStringValue();
-/* ----------- */
+  bool next_is(char c);
+  bool forward_if_next_is(char c);
+  bool forward_is(char c);
+  // If "keyword" can be read return true and move forward the cursor
+  // otherwise don't move the cursor and return false
+  bool keyword(const char *keyword);
+  bool separator();
 
-/* ------------ */
+  bool whitespace();
+  bool backline();
+  bool comment();
 
-template <typename TToken>
-static void skip(TToken token) {
-  use_tanuki;
+  // forward for one character
+  void forward();
+  void backward();
+};
 
-  token->skip(blank());
-  token->skip(lineTerminator());
-  token->skip(range(constant("/*"), constant("*/")));
-  token->skip(range(constant("//"), lineTerminator()));
+ast::Program *parse_from_stream(std::istream *is) {
+  ast::Program *result = new ast::Program;
+
+  Parser parser(is);
+  while (parser.separator())
+    ;
+  parser.module();
+  while (parser.separator())
+    ;
+  // result->defineModule(parser.module());
+
+  return result;
 }
 
-void parse(tanuki::String in) {
-  if (tanuki::ref<ast::Program> result = TokenMain()->match(in)) {
-    result->print();
-  } else {
-    std::cout << "Parsing fail" << std::endl;
+ast::Program *parse(const std::string &in) {
+  std::istringstream is(in);
+
+  return parse_from_stream(&is);
+}
+
+ast::Program *parse_file(const std::string &filename) {
+  std::ifstream is(filename);
+
+  return parse_from_stream(&is);
+}
+
+StringParsingResult Parser::module() {
+  pos_t pos = is->tellg();
+
+  StringParsingResult result;
+
+  if (keyword("module")) {
+    std::cerr << "parsing module" << std::endl;
+
+    if (separator()) {
+      StringParsingResult id = identifier();
+      if (id.ok) {
+        std::cerr << "module : " << id.result << std::endl;
+      }
+    }
   }
-}
-
-void parseFile(std::string fileName) {
-  std::ifstream ifs(fileName);
-  std::string content((std::istreambuf_iterator<char>(ifs)),
-                      (std::istreambuf_iterator<char>()));
-
-  parse(content.c_str());
-}
-
-static auto identifier = tanuki::word(tanuki::letter());
-
-tanuki::ref<tanuki::Fragment<ast::Program>> TokenMain() {
-  using namespace ast;
-  use_tanuki;
-
-  ref<Fragment<Program>> result = fragment<Program>();
-  result->skipAtEnd = true;
-  skip(result);
-
-  result->handle(
-      [](auto, ref<std::string> module, auto) -> ref<Program> {
-        ref<Program> result(new Program());
-        result->defineModule(*dereference(module));
-
-        return result;
-      },
-      constant("module "), identifier, TokenTop());
 
   return result;
 }
 
-/* Top Level */
-tanuki::ref<tanuki::Fragment<ast::TopLevelContent>> TokenTop() {
-  using namespace ast;
-  use_tanuki;
+StringParsingResult Parser::literal(const std::string &str) {}
 
-  return Fragment<TopLevelContent>::select(TokenDefine());
-}
+StringParsingResult Parser::identifier() {
+  StringParsingResult result;
+  int32_t c = is->peek();
 
-tanuki::ref<tanuki::Fragment<ast::Define>> TokenDefine() {
-  using namespace ast;
-  use_tanuki;
+  if (std::isalpha(c) || c == '$') {
+    result.ok = true;
+    int32_t c = is->get();
 
-  ref<Fragment<Define>> result = fragment<Define>();
-  skip(result);
+    while (std::isalnum(c) || c == '$') {
+      result.result += c;
+      if (is->eof()) break;
 
-  result->handle([](auto, auto, auto, auto, auto, auto, auto,
-                    auto) -> ref<Define> { return new Define(); },
-                 constant("define "), TokenType(), constant("::"), identifier,
-                 constant('('), constant(')'), constant('{'), constant('}'));
+      c = is->get();
+    }
+  }
 
   return result;
 }
 
-/* --------- */
+bool Parser::next_is(char c) {
+  if (is->eof()) return false;
 
-/* -- Type -- */
-tanuki::ref<tanuki::Fragment<ast::Type>> TokenType() {
-  using namespace ast;
-  use_tanuki;
+  return (is->peek() == c);
+}
 
-  ref<Fragment<Type>> result = fragment<Type>();
-  result->handle([](ref<Type> in) -> ref<Type> { return in; },
-                 TokenAtomicType());
-  result->handle([](auto in, auto,
-                    auto) -> ref<Type> { return new ArrayType(in.release()); },
-                 result, constant('['), constant(']'));
+bool Parser::forward_if_next_is(char c) {
+  bool result = next_is(c);
+
+  if (result) forward();
 
   return result;
 }
 
-tanuki::ref<tanuki::Fragment<ast::Type>> TokenAtomicType() {
-  using namespace ast;
-  use_tanuki;
+bool Parser::forward_is(char c) {
+  if (is->eof()) return false;
 
-  return Fragment<Type>::select(TokenStringType());
+  return (is->get() == c);
 }
 
-tanuki::ref<tanuki::Fragment<ast::StringType>> TokenStringType() {
-  using namespace ast;
-  use_tanuki;
+bool Parser::keyword(const char *keyword) {
+  // If keyword ask is "empty" return false...
+  if (keyword[0] == '\0') return false;
 
-  ref<Fragment<StringType>> result = fragment<StringType>();
-  result->handle([](auto) -> ref<StringType> { return new StringType(); },
-                 constant("String"));
+  bool result = false;
+
+  size_t i = 0;
+  char c = keyword[i];
+  while (forward_if_next_is(c)) {
+    i++;
+    c = keyword[i];
+
+    if (c == '\0') {
+      result = true;
+      break;
+    }
+  }
 
   return result;
 }
 
-/* -- Value -- */
-tanuki::ref<tanuki::Fragment<ast::Value>> TokenValue() {
-  using namespace ast;
-  use_tanuki;
+bool Parser::separator() {
+  bool result = false;
 
-  return Fragment<Value>::select(TokenIntValue(), TokenStringValue());
-}
-
-tanuki::ref<tanuki::Fragment<ast::IntValue>> TokenIntValue() {
-  using namespace ast;
-  use_tanuki;
-
-  ref<Fragment<IntValue>> result = fragment<IntValue>();
-  result->handle([](ref<int> value) -> ref<IntValue> { return new IntValue(*dereference(value)); },
-                 integer());
+  while (whitespace() || comment()) {
+    result = true;
+  }
 
   return result;
 }
 
-static tanuki::ref<tanuki::Fragment<ast::StringValue>> TokenStringValue() {
-  using namespace ast;
-  use_tanuki;
+bool Parser::whitespace() {
+  bool result = false;
 
-  ref<Fragment<StringValue>> result = fragment<StringValue>();
-  result->handle([](auto, ref<std::string> value, auto) -> ref<StringValue> { return new StringValue(*dereference(value)); },
-                 constant('"'), word(letter() or anyOf(' ', '\'')), constant('"'));
+  if (forward_if_next_is(' ')) {
+    result = true;
+  } else if (forward_if_next_is('\t')) {
+    result = true;
+  } else if (backline()) {
+    result = true;
+  }
 
   return result;
 }
-/* ----------- */
 
-/* ---------- */
+bool Parser::backline() {
+  bool result = false;
+
+  if (is->eof()) {
+    result = true;
+  } else if (forward_if_next_is('\n')) {
+    result = true;
+  } else if (forward_if_next_is('\r')) {
+    if (forward_if_next_is('\n')) {
+      result = true;
+    } else {
+      backward();
+    }
+  }
+
+  return result;
+}
+
+bool Parser::comment() {
+  bool result = false;
+
+  if (forward_if_next_is('/')) {
+    if (forward_if_next_is('/')) {
+      result = true;
+      while (!backline()) {
+        forward();
+      }
+    } else if (forward_if_next_is('*')) {
+      result = true;
+      bool loop = true;
+
+      while (loop) {
+        if (is->eof()) {
+          loop = false;
+        } else {
+          if (forward_is('*')) {
+            if (forward_is('/')) {
+              loop = false;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+void Parser::forward() { is->get(); }
+
+void Parser::backward() { is->unget(); }
 }

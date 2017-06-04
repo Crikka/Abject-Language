@@ -2,6 +2,7 @@ project(Abject)
 
 add_subdirectory(vendor/tanuki)
 include_directories(vendor/tanuki)
+include_directories(src)
 
 # Names
 set(ABJECT_COMMON "AbjectCommon") # lib for common classes
@@ -11,55 +12,55 @@ set(ABJECT_COMPILER "AbjectC") # Front end compiler
 set(ABJECT_ONIRISM "Onirism") # front end executor (jit)
 set(ABJECT_LETHARGY "Lethargy") # front end executor (interpreter)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.4)
 
 add_library(${ABJECT_COMMON}
-  common/cref.cc
-  common/countable.cc
-  common/memory.cc
-  common/murmur.cc
+  src/common/cref.cc
+  src/common/countable.cc
+  src/common/memory.cc
+  src/common/murmur.cc
+
+  misc/examples/Simple.abj
 )
 
 add_library(${ABJECT_METAMODEL_CORE}
   # metamodel
-  metamodel/metamodel.cc
-  metamodel/module.cc
-  metamodel/modular.cc
-  metamodel/types.cc
-  metamodel/function.cc
+  src/metamodel/metamodel.cc
+  src/metamodel/module.cc
+  src/metamodel/modular.cc
+  src/metamodel/types.cc
+  src/metamodel/function.cc
 
   # cfg
-  metamodel/cfg/code.cc
-  metamodel/cfg/statements.cc
-  metamodel/cfg/identifier.cc
+  src/metamodel/cfg/code.cc
+  src/metamodel/cfg/statements.cc
+  src/metamodel/cfg/identifier.cc
 
   # Abstract
-  abstract/abstract.cc
+  src/abstract/abstract.cc
 
   # Loader
-  metamodel/loader/loader.cc
+  src/metamodel/loader/loader.cc
 
   ## Filesystem
-  metamodel/loader/filesystem/filesystem.cc
+  src/metamodel/loader/filesystem/filesystem.cc
 )
 
 add_library(${ABJECT_COMPILER_TOOLS}
-  compiler/parser/ast.cpp
-  compiler/parser/parse.cpp
+  src/compiler/parser/ast.cpp
+  src/compiler/parser/parse.cpp
 )
 
 add_executable(${ABJECT_COMPILER}
-  compilermain.cpp
+  src/compilermain.cpp
 )
 
 add_executable(${ABJECT_LETHARGY}
-    lethargy.cc
+  src/lethargy.cc
 
-    execution/lethargy/interpreter.cc
-    execution/lethargy/executor.cc
-    execution/lethargy/runtime.cc
+  src/execution/lethargy/interpreter.cc
+  src/execution/lethargy/executor.cc
+  src/execution/lethargy/runtime.cc
 )
 
 # Common
@@ -90,8 +91,8 @@ set_target_properties(${ABJECT_COMPILER} PROPERTIES
 )
 
 # Onirism
-add_executable(${ABJECT_ONIRISM} onirism.cc)
-target_link_libraries(${ABJECT_ONIRISM} ${ABJECT_METAMODEL_CORE})  # ${ABJECT_COMPILER_TOOLS}
+add_executable(${ABJECT_ONIRISM} src/onirism.cc)
+target_link_libraries(${ABJECT_ONIRISM} ${ABJECT_METAMODEL_CORE} ${ABJECT_COMPILER_TOOLS} LLVM)  # ${ABJECT_COMPILER_TOOLS}
 set_target_properties(${ABJECT_ONIRISM} PROPERTIES
     LINKER_LANGUAGE CXX
     CXX_STANDARD 14

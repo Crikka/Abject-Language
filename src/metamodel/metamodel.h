@@ -15,7 +15,7 @@ class Metamodel : public Countable {
   Metamodel();
   virtual ~Metamodel();
 
-  void AddFunction(Function *function);
+  Function *AddFunction(Function *function);
 
   Function *function(size_t pos);
 

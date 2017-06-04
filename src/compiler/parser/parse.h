@@ -4,9 +4,12 @@
 #include <stack>
 #include <string>
 
-#include "tanuki/tanuki.h"
-
 namespace ai {
-void parse(tanuki::String in);
-void parseFile(std::string fileName);
+
+namespace ast {
+struct Program;
+}  // namespace ast
+
+ast::Program *parse(const std::string &in);
+ast::Program *parse_file(const std::string &filename);
 }  // namespace ai

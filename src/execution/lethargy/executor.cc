@@ -35,8 +35,8 @@ rt::Value *Executor::Impl::Call(size_t function_id,
                                 const std::vector<rt::Value *> &args) {
   Function *fct = metamodel->function(function_id);
 
-  size_t parameter_accepted = fct->parameters_accepted();
-  size_t locals_length = fct->locals_length();
+  size_t parameter_accepted = fct->parameters();
+  size_t locals_length = fct->locals();
   Code *code = fct->code();
 
   assert(args.size() == parameter_accepted);

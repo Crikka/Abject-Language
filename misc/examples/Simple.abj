@@ -1,7 +1,7 @@
 module Simple
 
-define String[]::main() {
+/*define String[]::main() {
     /*"Hello world"=>Print();
 
     return 0;*/
-}
+}*/

@@ -34,12 +34,16 @@ int main(int argc, char *argv[]) {
   code->Push(new DirectCall(1, 0, {2}));
   code->Push(new Return(0));
 
-  meta.AddFunction(new Function(0, 3, code));
+  Function *main = meta.AddFunction(new Function(code));
+  main->parameters(0);
+  main->locals(3);
 
   Code *code2 = new Code;
   code2->Push(new Return(0));
 
-  meta.AddFunction(new Function(1, 1, code2));
+  Function *identity = meta.AddFunction(new Function(code2));
+  identity->parameters(1);
+  identity->locals(1);
 
   /*ai::AbstractDomain domain;
   ai::Identifier id{1, 2};

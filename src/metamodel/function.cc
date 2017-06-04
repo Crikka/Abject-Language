@@ -4,10 +4,7 @@
 
 namespace ai {
 
-Function::Function(size_t parameters_accepted, size_t locals_lenght, Code *code)
-    : parameters_accepted_(parameters_accepted),
-      locals_length_(locals_lenght),
-      code_(code) {}
+Function::Function(Code *code) : parameters_(0), locals_(0), code_(code) {}
 
 Function::~Function() {}
 

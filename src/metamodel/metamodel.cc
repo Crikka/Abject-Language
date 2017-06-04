@@ -10,11 +10,13 @@ Metamodel::Metamodel() {}
 
 Metamodel::~Metamodel() {}
 
-void Metamodel::AddFunction(Function *function) {
+Function *Metamodel::AddFunction(Function *function) {
   assert(!function->IsWellDefined());
 
   function->id(functions_.size());
   functions_.emplace_back(function);
+
+  return function;
 }
 
 Function *Metamodel::function(size_t pos) {
