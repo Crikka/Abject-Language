@@ -1,4 +1,4 @@
-#include "ast.h"
+#include "compiler/parser/ast.h"
 
 #include <iostream>
 
@@ -39,8 +39,7 @@ VariableDeclaration::VariableDeclaration(Identifier* identifier)
     : VariableDeclaration(identifier, nullptr) {}
 
 void VariableDeclaration::print() {
-  std::cout << "Variable Declaration" << std::endl
-            << "  Identifier : ";
+  std::cout << "Variable Declaration" << std::endl << "  Identifier : ";
   m_identifier->print();
   std::cout << "  Initialized with : ";
   m_value->print();
@@ -65,8 +64,7 @@ Assignment::Assignment(Identifier* identifier, Value* value)
     : Node(), m_identifier(identifier), m_value(value) {}
 
 void Assignment::print() {
-  std::cout << "Assignment" << std::endl
-            << "  Left Reference : ";
+  std::cout << "Assignment" << std::endl << "  Left Reference : ";
   m_identifier->print();
   std::cout << "  Right Value : ";
   m_value->print();

@@ -2,53 +2,52 @@
 
 #include <iostream>
 
-#include <assert.h>
+#include <cassert>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "common/cref.h"
 #include "common/memory.h"
 
 namespace ai {
-enum StKind { kStReturn, kDirectCall, kStStringLiteral, kStIntegerLiteral };
+class Statement;
+class Return;
+class Call;
+class Block;
 
-namespace {
-template <StKind kind>
-struct AsHelper {};
-}
+template <typename T>
+class Assignment;
 
-#define DeclareAs(type, kind) \
-  namespace {                 \
-  template <>                 \
-  struct AsHelper<kind> {     \
-    typedef type ReturnType;  \
-  };                          \
-  }
+typedef Assignment<std::string> StringLiteral;
+typedef Assignment<int32_t> Int32Literal;
+
+struct Visitor {
+  void Visit(Statement *statement);
+
+  virtual void callback(Return * /*_*/) {}
+  virtual void callback(Call * /*_*/) {}
+  virtual void callback(Block * /*_*/) {}
+  virtual void callback(StringLiteral * /*_*/) {}
+  virtual void callback(Int32Literal * /*_*/) {}
+};
 
 class Statement {
  public:
+  virtual void visit(Visitor *visitor) = 0;
+
   virtual ~Statement() = default;
 
-  StKind kind() const { return kind_; }
-
-  template <StKind kind>
-  typename AsHelper<kind>::ReturnType *As() {
-    assert(kind == kind_);
-
-    return static_cast<typename AsHelper<kind>::ReturnType *>(this);
-  }
-
  protected:
-  explicit Statement(StKind kind) : kind_(kind) {}
+  Statement() {}
 
  private:
-  StKind kind_;
 };
 
 class Return : public Statement {
  public:
-  Return(size_t value) : Statement(kStReturn), value_(value) {}
+  void visit(Visitor *visitor) override { visitor->callback(this); }
+
+  Return(size_t value) : Statement(), value_(value) {}
 
   size_t value() const { return value_; }
 
@@ -56,15 +55,12 @@ class Return : public Statement {
   size_t value_;
 };
 
-DeclareAs(Return, kStReturn);
-
-class DirectCall : public Statement {
+class Call : public Statement {
  public:
-  DirectCall(size_t function_id, size_t var, const std::vector<size_t> &args)
-      : Statement(kDirectCall),
-        function_id_(function_id),
-        var_(var),
-        args_(args) {}
+  void visit(Visitor *visitor) override { visitor->callback(this); }
+
+  Call(size_t function_id, size_t var, const std::vector<size_t> &args)
+      : Statement(), function_id_(function_id), var_(var), args_(args) {}
 
   size_t function_id() const { return function_id_; }
   size_t var() const { return var_; }
@@ -76,13 +72,26 @@ class DirectCall : public Statement {
   std::vector<size_t> args_;
 };
 
-DeclareAs(DirectCall, kDirectCall);
+class Block : public Statement {
+ public:
+  void visit(Visitor *visitor) override { visitor->callback(this); }
 
-template <typename T, StKind k>
+  Block();
+
+  void AddStatement(Statement *statement);
+  const std::vector<std::unique_ptr<Statement>> &statements() const;
+
+ private:
+  std::vector<std::unique_ptr<Statement>> statements_;
+};
+
+template <typename T>
 class Assignment : public Statement {
  public:
+  void visit(Visitor *visitor) override { visitor->callback(this); }
+
   Assignment(size_t var, const T &value)
-      : Statement(k), var_(var), value_(value) {}
+      : Statement(), var_(var), value_(value) {}
 
   size_t var() const { return var_; }
   const T &value() const { return value_; }
@@ -91,12 +100,6 @@ class Assignment : public Statement {
   size_t var_;
   T value_;
 };
-
-typedef Assignment<const std::string, kStStringLiteral> StringLiteral;
-typedef Assignment<int, kStIntegerLiteral> IntegerLiteral;
-
-DeclareAs(StringLiteral, kStStringLiteral);
-DeclareAs(IntegerLiteral, kStIntegerLiteral);
 
 #undef DeclareAs
 }  // namespace ai

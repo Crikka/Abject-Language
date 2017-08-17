@@ -1,7 +1,5 @@
 #pragma once
 
-#include "common/countable.h"
-
 #include "metamodel/modular.h"
 
 namespace ai {
@@ -9,9 +7,9 @@ class ArrayModel;
 
 /**
 *@brief The Artefact class
-*Artefact is something like "Object" for OOP language.
+* Artefact is something like "Object" for OOP language.
 */
-class Artefact : public Modular, public Countable {
+class Artefact : public Modular {
  public:
   Artefact(Module *module);
   virtual ~Artefact();
@@ -25,12 +23,17 @@ class Artefact : public Modular, public Countable {
  */
 class Model : public Artefact {
  public:
-  Model(Module *module);
+  enum Kind { kComplex, kString, kI32 };
+
+  explicit Model(Module *module, Kind kind);
   virtual ~Model();
+
+  Kind kind() const;
 
   ArrayModel *ArrayOf();
 
  private:
+  Kind kind_;
 };
 
 class Facet : public Model {
@@ -50,7 +53,7 @@ class ArrayModel : public Model {
  private:
   ArrayModel(Model *of);
 
-  cref<Model> of_;
+  Model *of_;
 
   friend class Model;
 };
@@ -63,6 +66,15 @@ class String : public Model {
 
  private:
   String();
+};
+
+class I32 : public Model {
+ public:
+  static I32 *Instance();
+  virtual ~I32();
+
+ private:
+  I32();
 };
 
 }  // namespace ai

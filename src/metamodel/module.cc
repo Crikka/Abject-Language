@@ -1,7 +1,5 @@
 #include "module.h"
 
-#include "common/cref.h"
-
 #include <string>
 #include <unordered_map>
 
@@ -11,7 +9,7 @@
 namespace ai {
 // Static
 Module *Module::LookFor(const std::string &identifier) {
-  typedef std::unordered_map<std::string, cref<Module>> TCache;
+  typedef std::unordered_map<std::string, Module *> TCache;
 
   static TCache cache;
   TCache::const_iterator it = cache.find(identifier);
@@ -21,7 +19,7 @@ Module *Module::LookFor(const std::string &identifier) {
     result = new Module(identifier);
     cache[identifier] = result;
   } else {
-    result = it->second.get();
+    result = it->second;
   }
 
   return result;

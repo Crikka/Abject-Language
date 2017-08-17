@@ -1,11 +1,9 @@
 #pragma once
 
-#include "common/countable.h"
-
 #include <string>
 
 namespace ai {
-class Module : public Countable {
+class Module {
  public:
   static Module *LookFor(const std::string &identifier);
   static Module *Core();

@@ -43,6 +43,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Type.h>
+#include <llvm/IR/TypeBuilder.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Casting.h>
 #include <llvm/Support/TargetSelect.h>
@@ -53,43 +54,38 @@
 #include "compiler/parser/ast.h"
 #include "compiler/parser/parse.h"
 
+#include "metamodel/function.h"
 #include "metamodel/metamodel.h"
+#include "metamodel/types.h"
 
 #include "metamodel/cfg/code.h"
 #include "metamodel/cfg/identifier.h"
 #include "metamodel/cfg/statements.h"
 
+#include "execution/onirism/backend.h"
+
 using namespace llvm;
 
-static Function *CreateFibFunction(Module *M, LLVMContext &Context) {
-  // Create the fib function and insert it into module M. This function is said
-  // to return an int and take an int parameter.
-  Function *FibF = cast<Function>(M->getOrInsertFunction(
-      "fib", FunctionType::get(Type::getInt32Ty(Context),
-                               {Type::getInt32Ty(Context)}, false)));
-
-  // Add a basic block to the function.
-  BasicBlock *BB = BasicBlock::Create(Context, "EntryBlock", FibF);
-
+/*static Function *CreateFibFunction(LLVMContext &ctx, Module *M) {
   // Get pointers to the constants.
-  Value *One = ConstantInt::get(Type::getInt32Ty(Context), 1);
-  Value *Two = ConstantInt::get(Type::getInt32Ty(Context), 2);
+  Value *One = ConstantInt::get(Type::getInt32Ty(ctx), 1);
+  Value *Two = ConstantInt::get(Type::getInt32Ty(ctx), 2);
 
   // Get pointer to the integer argument of the add1 function...
   Argument *ArgX = &*FibF->arg_begin();  // Get the arg.
   ArgX->setName("n");  // Give it a nice symbolic name for fun.
 
   // Create the true_block.
-  BasicBlock *RetBB = BasicBlock::Create(Context, "return", FibF);
+  BasicBlock *RetBB = BasicBlock::Create(ctx, "return", FibF);
   // Create an exit block.
-  BasicBlock *RecurseBB = BasicBlock::Create(Context, "recurse", FibF);
+  BasicBlock *RecurseBB = BasicBlock::Create(ctx, "recurse", FibF);
 
   // Create the "if (arg <= 2) goto exitbb"
   Value *CondInst = new ICmpInst(*BB, ICmpInst::ICMP_SLE, ArgX, Two, "cond");
   BranchInst::Create(RetBB, RecurseBB, CondInst, BB);
 
   // Create: ret int 1
-  ReturnInst::Create(Context, One, RetBB);
+  ReturnInst::Create(ctx, One, RetBB);
 
   // create fib(x-1)
   Value *Sub = BinaryOperator::CreateSub(ArgX, One, "arg", RecurseBB);
@@ -106,61 +102,60 @@ static Function *CreateFibFunction(Module *M, LLVMContext &Context) {
       BinaryOperator::CreateAdd(CallFibX1, CallFibX2, "addresult", RecurseBB);
 
   // Create the return instruction and add it to the basic block
-  ReturnInst::Create(Context, Sum, RecurseBB);
+  ReturnInst::Create(ctx, Sum, RecurseBB);
 
   return FibF;
-}
+}*/
 
 int main(int argc, char **argv) {
-  ai::ast::Program *program = ai::parse_file("misc/examples/Simple.abj");
+  /*ai::ast::Program *program = ai::parse_file("misc/examples/Simple.abj");
   if (!program) {
     std::cerr << "Pasing fail" << std::endl;
   } else {
     program->print();
-  }
+  }*/
 
-  /*int n = argc > 1 ? atol(argv[1]) : 24;
+  /*ai::Code *code = new ai::Code;
+  code->Push(new ai::StringLiteral(2, "foo"));
+  code->Push(new ai::Int32Literal(1, 5));
+  code->Push(new ai::Call(1, 0, {2}));
+  code->Push(new ai::Return(0));
 
-  InitializeNativeTarget();
-  InitializeNativeTargetAsmPrinter();
-  LLVMContext Context;
+  ai::Function *main = meta.AddFunction(new ai::Function(code));
+  main->parameters(0);
+  main->locals(3);
 
-  // Create some module to put our function into it.
-  std::unique_ptr<Module> Owner(new Module("test", Context));
-  Module *M = Owner.get();
+  ai::Code *code2 = new ai::Code;
+  code2->Push(new ai::Return(0));
 
-  // We are about to create the "fib" function:
-  Function *FibF = CreateFibFunction(M, Context);
+  ai::Function *identity = meta.AddFunction(new ai::Function(code2));
+  identity->parameters(1);
+  identity->locals(1);*/
 
-  // Now we going to create JIT
-  std::string errStr;
-  ExecutionEngine *EE =
-      EngineBuilder(std::move(Owner)).setErrorStr(&errStr).create();
+  /*ai::AbstractDomain domain;
+  ai::Identifier id{1, 2};
 
-  if (!EE) {
-    errs() << argv[0] << ": Failed to construct ExecutionEngine: " << errStr
-           << "\n";
-    return 1;
-  }
+  domain.Let(id) < 6;
+  domain.Let(id) = 6;
+  domain.Let(id) < 6;*/
 
-  errs() << "verifying... ";
-  if (verifyModule(*M)) {
-    errs() << argv[0] << ": Error constructing function!\n";
-    return 1;
-  }
+  ai::Code *code = new ai::Code;
+  code->Push(new ai::Call(1, 0, {}));
+  code->Push(new ai::Return(0));
 
-  errs() << "OK\n";
-  errs() << "We just constructed this LLVM module:\n\n---------\n" << *M;
-  errs() << "---------\nstarting fibonacci(" << n << ") with JIT...\n";
+  ai::Function *main =
+      ai::model()->AddFunction(ai::I32::Instance(), code, "main");
+  main->locals(1);
 
-  // Call the Fibonacci function with argument n:
-  std::vector<GenericValue> Args(1);
-  Args[0].IntVal = APInt(32, n);
+  ai::Code *code2 = new ai::Code;
+  code2->Push(new ai::Int32Literal(0, 32));
+  code2->Push(new ai::Return(0));
 
-  GenericValue GV = EE->runFunction(FibF, Args);
+  ai::Function *id = ai::model()->AddFunction(ai::I32::Instance(), code2, "id");
+  id->locals(1);
 
-  // import result of execution
-  outs() << "Result: " << GV.IntVal << "\n";*/
+  ai::rt::OnirismBackend backend;
+  int result = backend.RunMain(main, {});
 
-  return 0;
+  return result;
 }

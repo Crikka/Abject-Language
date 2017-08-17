@@ -9,14 +9,13 @@ set(ABJECT_COMMON "AbjectCommon") # lib for common classes
 set(ABJECT_METAMODEL_CORE "MetamodelCore") # lib for metamodel
 set(ABJECT_COMPILER_TOOLS "AbjectCompilerTools") # lib for compiling
 set(ABJECT_COMPILER "AbjectC") # Front end compiler
+set(ABJECT_RUNTIME "AbjectRuntime") # Runtime to implements
 set(ABJECT_ONIRISM "Onirism") # front end executor (jit)
 set(ABJECT_LETHARGY "Lethargy") # front end executor (interpreter)
 
 cmake_minimum_required(VERSION 3.4)
 
 add_library(${ABJECT_COMMON}
-  src/common/cref.cc
-  src/common/countable.cc
   src/common/memory.cc
   src/common/murmur.cc
 
@@ -55,14 +54,6 @@ add_executable(${ABJECT_COMPILER}
   src/compilermain.cpp
 )
 
-add_executable(${ABJECT_LETHARGY}
-  src/lethargy.cc
-
-  src/execution/lethargy/interpreter.cc
-  src/execution/lethargy/executor.cc
-  src/execution/lethargy/runtime.cc
-)
-
 # Common
 set_target_properties(${ABJECT_COMMON} PROPERTIES
     LINKER_LANGUAGE CXX
@@ -90,16 +81,41 @@ set_target_properties(${ABJECT_COMPILER} PROPERTIES
     CXX_STANDARD 14
 )
 
+# Runtime
+add_library(${ABJECT_RUNTIME}
+  src/execution/backend.cc
+)
+
+target_link_libraries(${ABJECT_RUNTIME} ${ABJECT_METAMODEL_CORE})  # ${ABJECT_COMPILER_TOOLS}
+set_target_properties(${ABJECT_RUNTIME} PROPERTIES
+    LINKER_LANGUAGE CXX
+    CXX_STANDARD 14
+)
+
+
 # Onirism
-add_executable(${ABJECT_ONIRISM} src/onirism.cc)
-target_link_libraries(${ABJECT_ONIRISM} ${ABJECT_METAMODEL_CORE} ${ABJECT_COMPILER_TOOLS} LLVM)  # ${ABJECT_COMPILER_TOOLS}
+add_executable(${ABJECT_ONIRISM}
+  src/onirism.cc
+
+  src/execution/onirism/backend.cc
+)
+
+target_link_libraries(${ABJECT_ONIRISM} ${ABJECT_RUNTIME} ${ABJECT_COMPILER_TOOLS} LLVM)  # ${ABJECT_COMPILER_TOOLS}
 set_target_properties(${ABJECT_ONIRISM} PROPERTIES
     LINKER_LANGUAGE CXX
     CXX_STANDARD 14
 )
 
 # Lethargy
-target_link_libraries(${ABJECT_LETHARGY} ${ABJECT_METAMODEL_CORE})  # ${ABJECT_COMPILER_TOOLS}
+add_executable(${ABJECT_LETHARGY}
+  src/lethargy.cc
+
+  src/execution/lethargy/interpreter.cc
+  src/execution/lethargy/executor.cc
+  src/execution/lethargy/runtime.cc
+)
+
+target_link_libraries(${ABJECT_LETHARGY} ${ABJECT_RUNTIME})  # ${ABJECT_COMPILER_TOOLS}
 set_target_properties(${ABJECT_LETHARGY} PROPERTIES
     LINKER_LANGUAGE CXX
     CXX_STANDARD 14

@@ -3,25 +3,24 @@
 #include <stddef.h>
 #include <vector>
 
-#include "common/cref.h"
 #include "common/unique.h"
 
 namespace ai {
-namespace rt {
-struct Value;
-}  // namespace rt
-
 class Metamodel;
+
+namespace rt {
+class Value;
 
 class Executor {
  public:
   explicit Executor(Metamodel *metamodel);
   virtual ~Executor();
 
-  rt::Value *Start(size_t function_id, const std::vector<rt::Value *> args);
+  Value *Start(size_t function_id, const std::vector<Value *> args);
 
  private:
   struct Impl;
   unique<Impl> impl;
 };
+}  // namespace rt
 }  // namespace ai

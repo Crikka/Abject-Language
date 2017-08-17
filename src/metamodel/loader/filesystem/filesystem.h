@@ -1,10 +1,7 @@
 #pragma once
 
-#include "common/countable.h"
-
 namespace ai {
-class VirtualFS : public Countable {
-public:
-  
+class VirtualFS {
+ public:
 };
 }  // namespace ai

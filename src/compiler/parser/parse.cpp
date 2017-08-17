@@ -93,7 +93,7 @@ StringParsingResult Parser::module() {
   return result;
 }
 
-StringParsingResult Parser::literal(const std::string &str) {}
+StringParsingResult Parser::literal(const std::string &str) { throw "todo"; }
 
 StringParsingResult Parser::identifier() {
   StringParsingResult result;

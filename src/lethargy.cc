@@ -26,23 +26,22 @@ int main(int argc, char *argv[]) {
 
   // abject::parseFile("misc/examples/Simple.abj");
 
-  Metamodel meta;
+  Metamodel *meta = model();
 
   Code *code = new Code;
   code->Push(new StringLiteral(2, "foo"));
-  code->Push(new IntegerLiteral(1, 5));
-  code->Push(new DirectCall(1, 0, {2}));
+  code->Push(new Int32Literal(1, 5));
+  code->Push(new Call(1, 0, {2}));
   code->Push(new Return(0));
 
-  Function *main = meta.AddFunction(new Function(code));
-  main->parameters(0);
+  Function *main = meta->AddFunction(I32::Instance(), code, "main");
   main->locals(3);
 
   Code *code2 = new Code;
   code2->Push(new Return(0));
 
-  Function *identity = meta.AddFunction(new Function(code2));
-  identity->parameters(1);
+  Function *identity = meta->AddFunction(String::Instance(), code2, "id");
+  identity->AddParameter(String::Instance());
   identity->locals(1);
 
   /*ai::AbstractDomain domain;
@@ -52,7 +51,7 @@ int main(int argc, char *argv[]) {
   domain.Let(id) = 6;
   domain.Let(id) < 6;*/
 
-  Executor executor(&meta);
+  rt::Executor executor(meta);
   rt::Value *result = executor.Start(0, {});
 
   std::cerr << static_cast<rt::Str *>(result)->value << std::endl;

@@ -4,8 +4,9 @@
 
 namespace ai {
 Modular::Modular(Module *module) : module_(module) {}
+
 Modular::~Modular() {}
 
-Module *Modular::module() const { return module_.get(); }
+Module *Modular::module() const { return module_; }
 
 }  // namespace ai
