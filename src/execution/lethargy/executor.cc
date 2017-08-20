@@ -106,7 +106,7 @@ rt::Value *Eval(Metamodel *metamodel, Code *code,
 
   ExecutorVisitor visitor(metamodel, std::move(locals));
 
-  for (const unique<Statement> &statement : code->statements()) {
+  for (const unique<Statement> &statement : code->EntryBlock()->statements()) {
     visitor.Visit(statement.get());
     if (visitor.result) break;
   }

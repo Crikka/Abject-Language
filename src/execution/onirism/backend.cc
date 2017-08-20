@@ -127,11 +127,28 @@ struct ExecutorVisitor : Visitor {
         function->name(),
         llvm::FunctionType::get(return_type, args_type, false)));
 
-    blocks.push(llvm::BasicBlock::Create(context, "EntryBlock", fct));
     values.resize(function->locals(), nullptr);
+    blocks.resize(function->code()->number_of_blocks(), nullptr);
 
-    for (const unique<Statement> &statement : function->code()->statements()) {
-      Visit(statement.get());
+    for (const std::unique_ptr<Block> &block : function->code()->blocks()) {
+      current = llvm::BasicBlock::Create(context, "", fct);
+      blocks[block->id()] = current;
+
+      for (const unique<Statement> &statement : block->statements()) {
+        Visit(statement.get());
+      }
+    }
+
+    for (const Code::BlockGraph &graph : function->code()->block_graph()) {
+      assert(values[graph.val]);
+
+      assert(blocks[graph.from]);
+      assert(blocks[graph.consequent]);
+      assert(blocks[graph.alternate]);
+
+      llvm::BranchInst::Create(blocks[graph.consequent],
+                               blocks[graph.alternate], values[graph.val],
+                               blocks[graph.from]);
     }
   }
 
@@ -144,8 +161,30 @@ struct ExecutorVisitor : Visitor {
 
   llvm::Function *wrapped_print;
 
-  std::stack<llvm::BasicBlock *> blocks;
+  llvm::BasicBlock *current;
+  std::vector<llvm::BasicBlock *> blocks;
   std::vector<llvm::Value *> values;
+
+  void callback(Compare *cmp) override {
+    size_t var = cmp->var();
+    size_t left = cmp->left();
+    size_t right = cmp->right();
+
+    assert(!values[var]);
+    assert(values[left]);
+    assert(values[right]);
+
+    switch (cmp->kind()) {
+      case Compare::kEq: {
+        values[var] = new llvm::ICmpInst(*current, llvm::ICmpInst::ICMP_EQ,
+                                         values[left], values[right]);
+      } break;
+      case Compare::kNEq: {
+        values[var] = new llvm::ICmpInst(*current, llvm::ICmpInst::ICMP_NE,
+                                         values[left], values[right]);
+      }
+    }
+  }
 
   void callback(Return *ret) override {
     size_t value = ret->value();
@@ -154,7 +193,7 @@ struct ExecutorVisitor : Visitor {
     /*llvm::CallInst::Create(wrapped_print, {values[value]}, "call",
                            blocks.top());*/
 
-    llvm::ReturnInst::Create(context, values[value], blocks.top());
+    llvm::ReturnInst::Create(context, values[value], current);
   }
 
   void callback(ai::Call *call) override {
@@ -165,7 +204,7 @@ struct ExecutorVisitor : Visitor {
 
     llvm::Function *callee = info->GetFunction(function_id);
 
-    values[var] = llvm::CallInst::Create(callee, {}, "", blocks.top());
+    values[var] = llvm::CallInst::Create(callee, {}, "", current);
   }
 
   void callback(StringLiteral *literal) override {
@@ -180,12 +219,12 @@ struct ExecutorVisitor : Visitor {
 
     cst->setInitializer(data);
 
-    llvm::GetElementPtrInst *ptr_data = llvm::GetElementPtrInst::Create(
-        nullptr, cst, {}, "ptr_data", blocks.top());
+    llvm::GetElementPtrInst *ptr_data =
+        llvm::GetElementPtrInst::Create(nullptr, cst, {}, "ptr_data", current);
 
     values[left] = llvm::BitCastInst::CreatePointerCast(
         ptr_data, llvm::Type::getInt8Ty(context)->getPointerTo(0), "casted",
-        blocks.top());
+        current);
   }
 
   void callback(Int32Literal *literal) override {

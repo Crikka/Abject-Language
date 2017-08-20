@@ -140,16 +140,25 @@ int main(int argc, char **argv) {
   domain.Let(id) < 6;*/
 
   ai::Code *code = new ai::Code;
-  code->Push(new ai::Call(1, 0, {}));
-  code->Push(new ai::Return(0));
+  ai::Block *entry = code->EntryBlock();
+  entry->Push(new ai::Call(1, 0, {}));
+  entry->Push(new ai::Int32Literal(1, 0));
+  entry->Push(new ai::Compare(2, 0, 1, ai::Compare::kEq));
+
+  std::pair<ai::Block *, ai::Block *> follow = code->Branch(entry, 2);
+  follow.first->Push(new ai::Int32Literal(3, 25));
+  follow.second->Push(new ai::Int32Literal(4, 42));
+  follow.first->Push(new ai::Return(3));
+  follow.second->Push(new ai::Return(4));
 
   ai::Function *main =
       ai::model()->AddFunction(ai::I32::Instance(), code, "main");
-  main->locals(1);
+  main->locals(5);
 
   ai::Code *code2 = new ai::Code;
-  code2->Push(new ai::Int32Literal(0, 32));
-  code2->Push(new ai::Return(0));
+  ai::Block *entry2 = code2->EntryBlock();
+  entry2->Push(new ai::Int32Literal(0, 32));
+  entry2->Push(new ai::Return(0));
 
   ai::Function *id = ai::model()->AddFunction(ai::I32::Instance(), code2, "id");
   id->locals(1);

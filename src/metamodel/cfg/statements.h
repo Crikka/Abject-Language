@@ -11,9 +11,9 @@
 
 namespace ai {
 class Statement;
+class Compare;
 class Return;
 class Call;
-class Block;
 
 template <typename T>
 class Assignment;
@@ -24,9 +24,9 @@ typedef Assignment<int32_t> Int32Literal;
 struct Visitor {
   void Visit(Statement *statement);
 
+  virtual void callback(Compare * /*_*/) {}
   virtual void callback(Return * /*_*/) {}
   virtual void callback(Call * /*_*/) {}
-  virtual void callback(Block * /*_*/) {}
   virtual void callback(StringLiteral * /*_*/) {}
   virtual void callback(Int32Literal * /*_*/) {}
 };
@@ -41,6 +41,27 @@ class Statement {
   Statement() {}
 
  private:
+};
+
+class Compare : public Statement {
+ public:
+  enum Kind { kEq, kNEq };
+
+  void visit(Visitor *visitor) override { visitor->callback(this); }
+
+  explicit Compare(size_t var, size_t left, size_t right, Kind kind)
+      : Statement(), var_(var), left_(left), right_(right), kind_(kind) {}
+
+  size_t var() const { return var_; }
+  size_t left() const { return left_; }
+  size_t right() const { return right_; }
+  Kind kind() const { return kind_; }
+
+ private:
+  size_t var_;
+  size_t left_;
+  size_t right_;
+  Kind kind_;
 };
 
 class Return : public Statement {
@@ -70,19 +91,6 @@ class Call : public Statement {
   size_t function_id_;
   size_t var_;
   std::vector<size_t> args_;
-};
-
-class Block : public Statement {
- public:
-  void visit(Visitor *visitor) override { visitor->callback(this); }
-
-  Block();
-
-  void AddStatement(Statement *statement);
-  const std::vector<std::unique_ptr<Statement>> &statements() const;
-
- private:
-  std::vector<std::unique_ptr<Statement>> statements_;
 };
 
 template <typename T>

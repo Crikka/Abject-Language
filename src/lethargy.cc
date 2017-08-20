@@ -29,16 +29,18 @@ int main(int argc, char *argv[]) {
   Metamodel *meta = model();
 
   Code *code = new Code;
-  code->Push(new StringLiteral(2, "foo"));
-  code->Push(new Int32Literal(1, 5));
-  code->Push(new Call(1, 0, {2}));
-  code->Push(new Return(0));
+  Block *entry = code->EntryBlock();
+  entry->Push(new StringLiteral(2, "foo"));
+  entry->Push(new Int32Literal(1, 5));
+  entry->Push(new Call(1, 0, {2}));
+  entry->Push(new Return(0));
 
   Function *main = meta->AddFunction(I32::Instance(), code, "main");
   main->locals(3);
 
   Code *code2 = new Code;
-  code2->Push(new Return(0));
+  Block *entry2 = code->EntryBlock();
+  entry2->Push(new Return(0));
 
   Function *identity = meta->AddFunction(String::Instance(), code2, "id");
   identity->AddParameter(String::Instance());
