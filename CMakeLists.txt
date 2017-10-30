@@ -48,6 +48,7 @@ add_library(${ABJECT_METAMODEL_CORE}
 add_library(${ABJECT_COMPILER_TOOLS}
   src/compiler/parser/ast.cpp
   src/compiler/parser/parse.cpp
+  src/compiler/parser/diagnostic.cc
 )
 
 add_executable(${ABJECT_COMPILER}

@@ -1,165 +1,96 @@
 #pragma once
 
 #include <string>
+#include <tuple>
+#include <utility>
 #include <vector>
+
+#include "common/unique.h"
 
 namespace ai {
 namespace ast {
-class Node;
-class Program;
-class Empty;
-class Identifier;
-class VariablesDeclaration;
-class VariableDeclaration;
-class Assignment;
-class ArrayLiteral;
-class Value;
-class IntValue;
-class StringValue;
+// Forward
+struct TopLevelContent;
+struct Statement;
+struct Value;
+struct Type;
+struct Signature;
+struct Code;
+struct VariableDeclarator;
+struct Reference;
 
-// Type
-class Type;
-class ArrayType;
-class PrimitiveType;
-class StringType;
-
-class Node {
- public:
-  virtual ~Node() = default;
-
-  virtual void print() = 0;
+struct Program {
+  std::string module;
+  std::vector<unique<TopLevelContent>> top_level_contents;
 };
 
-class Program : public Node {
- public:
-  Program();
-  void defineModule(std::string name);
-  void addChild(Node* node);
-  void print() override;
+struct TopLevelContent {};
 
- private:
-  std::string m_module;
-  std::vector<Node*> m_children;
+struct Define : public TopLevelContent {
+  unique<Type> on;
+  unique<Signature> signature;
+  unique<Code> code;
 };
 
-class Empty : public Node {
- public:
-  Empty();
-  void print() override;
+struct Statement {};
+
+struct Empty : public Statement {};
+
+struct VariablesDeclaration : public Statement {
+  std::vector<unique<VariableDeclarator>> declarations;
 };
 
-class Identifier : public Node {
- public:
-  Identifier(std::string name);
-  void print() override;
-
- private:
-  std::string m_name;
+struct VariableDeclarator {
+  std::string identifier;
+  unique<Type> type;
+  unique<Value> value;
 };
 
-class VariableDeclaration : public Node {
- public:
-  VariableDeclaration(Identifier* identifier, Value* value);
-  VariableDeclaration(Identifier* identifier);
-  void print() override;
-
- private:
-  Identifier* m_identifier;
-  Value* m_value;
+struct Assignment : public Statement {
+  unique<Reference> target;
+  unique<Value> value;
 };
 
-class VariablesDeclaration : public Node {
- public:
-  VariablesDeclaration();
-  void push(VariableDeclaration* declaration);
-  void print() override;
+struct Value {};
 
- private:
-  std::vector<VariableDeclaration*> m_declarations;
-};
-
-class Assignment : public Node {
- public:
-  Assignment(Identifier* identifier, Value* value);
-  void print() override;
-
- private:
-  Identifier* m_identifier;
-  Value* m_value;
-};
-
-class ArrayLiteral : public Node {
- public:
-  ArrayLiteral();
-  void addValues(Value* value);
-  void print() override;
-
- private:
-  std::vector<Value*> m_values;
-};
-
-class Value : public Node {
- public:
+struct PrimitiveValue {
   /*
    * isInt...
    */
 };
 
-class IntValue : public Value {
- public:
-  IntValue(int value);
-  void print() override;
-
- private:
-  int m_value;
+struct Int32Value : public PrimitiveValue {
+  int32_t value;
 };
 
-class StringValue : public Value {
- public:
-  StringValue(std::string value);
-  void print() override;
-
- private:
-  std::string m_value;
+struct StringValue : public PrimitiveValue {
+  std::string value;
 };
 
-class Type : public Node {
- public:
-  Type();
+struct ArrayValue : public PrimitiveValue {
+  std::vector<unique<Value>> values;
 };
 
-class ArrayType : public Type {
- public:
-  ArrayType(Type* of);
+struct Type {};
 
-  void print() override;
-
- private:
-  Type* m_of;
+struct ArrayType : public Type {
+  unique<Type> of;
+  size_t length;
+  bool dynamic;
 };
 
-class PrimitiveType : public Type {
- public:
-  PrimitiveType();
+struct PrimitiveType : public Type {};
+
+struct StringType : public PrimitiveType {};
+
+struct Signature {
+  std::string name;
+  std::vector<std::tuple<unique<Type>, std::string, unique<Value>>> params;
+  bool variadic;
 };
 
-class StringType : public PrimitiveType {
- public:
-  StringType();
-
-  void print() override;
+struct Code {
+  std::vector<unique<Statement>> statements;
 };
-
-class TopLevelContent : public Node {
- public:
-  TopLevelContent();
-};
-
-class Define : public TopLevelContent {
- public:
-  Define();
-
-  void print() override;
-};
-}
-}
+}  // namespace ast
+}  // namespace ai

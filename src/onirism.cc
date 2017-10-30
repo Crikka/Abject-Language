@@ -108,12 +108,11 @@ using namespace llvm;
 }*/
 
 int main(int argc, char **argv) {
-  /*ai::ast::Program *program = ai::parse_file("misc/examples/Simple.abj");
-  if (!program) {
-    std::cerr << "Pasing fail" << std::endl;
-  } else {
-    program->print();
-  }*/
+  ai::ast::Program *program = ai::parse_file("misc/examples/Simple.abj");
+  std::cerr << "module : " << program->module << " -> "
+            << program->top_level_contents.size() << std::endl;
+
+  return 0;
 
   /*ai::Code *code = new ai::Code;
   code->Push(new ai::StringLiteral(2, "foo"));
@@ -139,7 +138,7 @@ int main(int argc, char **argv) {
   domain.Let(id) = 6;
   domain.Let(id) < 6;*/
 
-  ai::Code *code = new ai::Code;
+  /*ai::Code *code = new ai::Code;
   ai::Block *entry = code->EntryBlock();
   entry->Push(new ai::Call(1, 0, {}));
   entry->Push(new ai::Int32Literal(1, 0));
@@ -166,5 +165,5 @@ int main(int argc, char **argv) {
   ai::rt::OnirismBackend backend;
   int result = backend.RunMain(main, {});
 
-  return result;
+  return result;*/
 }

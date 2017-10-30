@@ -10,6 +10,7 @@
 #include <stack>
 
 #include "compiler/parser/ast.h"
+#include "compiler/parser/diagnostic.h"
 
 namespace ai {
 template <typename T>
@@ -24,11 +25,18 @@ struct Parser {
   typedef std::istream::pos_type pos_t;
 
   std::istream *is;
+  Diagnostic *diagnostic;
 
-  Parser(std::istream *is) : is(is) {}
+  explicit Parser(std::istream *is, Diagnostic *diagnostic)
+      : is(is), diagnostic(diagnostic) {}
 
+  ast::Program *TryToParse();
+
+  ParsingResult<ast::TopLevelContent *> top_level_content();
+  ParsingResult<ast::Type *> type();
+  ParsingResult<ast::Signature *> signature();
   StringParsingResult module();
-  StringParsingResult literal(const std::string &str);
+  StringParsingResult literal(const std::string &lit);
   StringParsingResult identifier();
 
   bool next_is(char c);
@@ -37,7 +45,7 @@ struct Parser {
   // If "keyword" can be read return true and move forward the cursor
   // otherwise don't move the cursor and return false
   bool keyword(const char *keyword);
-  bool separator();
+  bool skip();
 
   bool whitespace();
   bool backline();
@@ -48,52 +56,208 @@ struct Parser {
   void backward();
 };
 
-ast::Program *parse_from_stream(std::istream *is) {
-  ast::Program *result = new ast::Program;
+ast::Program *parse_from_stream(std::istream *is, Diagnostic *diagnostic) {
+  Parser parser(is, diagnostic);
 
-  Parser parser(is);
-  while (parser.separator())
-    ;
-  parser.module();
-  while (parser.separator())
-    ;
-  // result->defineModule(parser.module());
-
-  return result;
+  return parser.TryToParse();
 }
 
-ast::Program *parse(const std::string &in) {
+ast::Program *parse(const std::string &in, Diagnostic *diagnostic) {
   std::istringstream is(in);
 
-  return parse_from_stream(&is);
+  return parse_from_stream(&is, diagnostic);
 }
 
-ast::Program *parse_file(const std::string &filename) {
+ast::Program *parse_file(const std::string &filename, Diagnostic *diagnostic) {
   std::ifstream is(filename);
 
-  return parse_from_stream(&is);
+  return parse_from_stream(&is, diagnostic);
 }
 
 StringParsingResult Parser::module() {
-  pos_t pos = is->tellg();
-
   StringParsingResult result;
 
   if (keyword("module")) {
-    std::cerr << "parsing module" << std::endl;
-
-    if (separator()) {
-      StringParsingResult id = identifier();
-      if (id.ok) {
-        std::cerr << "module : " << id.result << std::endl;
-      }
-    }
+    result = identifier();
   }
 
   return result;
 }
 
-StringParsingResult Parser::literal(const std::string &str) { throw "todo"; }
+ast::Program *Parser::TryToParse() {
+  ast::Program *result = new ast::Program;
+
+  skip();
+
+  StringParsingResult next_module = module();
+  if (next_module.ok) {
+    result->module = next_module.result;
+  }
+
+  skip();
+
+  ParsingResult<ast::TopLevelContent *> next_top_level_content =
+      top_level_content();
+  while (next_top_level_content.ok) {
+    result->top_level_contents.emplace_back(next_top_level_content.result);
+
+    next_top_level_content = top_level_content();
+  }
+
+  return result;
+};
+
+ParsingResult<ast::TopLevelContent *> Parser::top_level_content() {
+  ParsingResult<ast::TopLevelContent *> result;
+
+  if (keyword("define")) {
+    ast::Define *define = new ast::Define;
+
+    result.ok = true;
+    result.result = define;
+
+    ParsingResult<ast::Type *> next_type = type();
+    if (next_type.ok) define->on.reset(next_type.result);
+
+    StringParsingResult quad_collon = literal("::");
+
+    ParsingResult<ast::Signature *> next_signature = signature();
+    if (next_signature.ok) define->signature.reset(next_signature.result);
+
+    skip();
+    forward_if_next_is('{');
+    skip();
+    forward_if_next_is('}');
+    skip();
+  }
+
+  return result;
+}
+
+ParsingResult<ast::Type *> Parser::type() {
+  ParsingResult<ast::Type *> result;
+
+  ast::Type *result_type = nullptr;
+
+  StringParsingResult next_identifier = identifier();
+  if (next_identifier.ok) {
+    if (next_identifier.result == "String") {
+      result_type = new ast::StringType;
+    }
+  }
+
+  if (result_type) {
+    while (next_is('[')) {
+      forward();
+
+      // parse digit...
+
+      if (forward_if_next_is(']')) {
+        ast::ArrayType *array = new ast::ArrayType;
+        array->of.reset(result_type);
+        array->dynamic = true;
+
+        result_type = array;
+      }
+    }
+  }
+
+  if (result_type) {
+    result.ok = true;
+    result.result = result_type;
+  }
+
+  return result;
+}
+
+ParsingResult<ast::Signature *> Parser::signature() {
+  ParsingResult<ast::Signature *> result;
+
+  StringParsingResult next_identifier = identifier();
+  if (!next_identifier.ok) return result;
+
+  std::cerr << ">> " << next_identifier.result << std::endl;
+
+  skip();
+
+  if (!forward_if_next_is('(')) return result;
+
+  std::cerr << "b1" << std::endl;
+
+  skip();
+
+  bool guess;
+
+  std::vector<std::tuple<std::string, ast::Type *>> list;
+
+  do {
+    guess = false;
+
+    StringParsingResult next_identifier = identifier();
+
+    if (next_identifier.ok) {
+      skip();
+
+      if (forward_if_next_is(':')) {
+        skip();
+
+        ParsingResult<ast::Type *> next_type = type();
+        if (next_type.ok) {
+          list.push_back(
+              std::make_tuple(next_identifier.result, next_type.result));
+
+          skip();
+
+          if (forward_if_next_is(',')) {
+            skip();
+
+            guess = true;
+          }
+        }
+      }
+    }
+  } while (guess);
+
+  if (forward_if_next_is(')')) {
+    ast::Signature *signature = new ast::Signature;
+    signature->name = next_identifier.result;
+
+    for (const std::tuple<std::string, ast::Type *> &l : list) {
+      signature->params.emplace_back();
+
+      std::get<0>(signature->params.back()).reset(std::get<1>(l));
+      std::get<1>(signature->params.back()) = std::get<0>(l);
+    }
+
+    result.ok = true;
+    result.result = signature;
+  }
+
+  return result;
+}
+
+StringParsingResult Parser::literal(const std::string &lit) {
+  StringParsingResult result;
+
+  size_t length = lit.size();
+
+  // If keyword ask is "empty" return false...
+  if (length == 0) return result;
+
+  result.ok = true;
+  result.result = lit;
+
+  for (size_t i = 0; i < length; i++) {
+    char c = lit[i];
+
+    if (!forward_if_next_is(c)) {
+      result.ok = false;
+      break;
+    }
+  }
+
+  return result;
+}
 
 StringParsingResult Parser::identifier() {
   StringParsingResult result;
@@ -101,14 +265,15 @@ StringParsingResult Parser::identifier() {
 
   if (std::isalpha(c) || c == '$') {
     result.ok = true;
-    int32_t c = is->get();
 
-    while (std::isalnum(c) || c == '$') {
+    do {
+      c = is->get();
+
       result.result += c;
       if (is->eof()) break;
 
-      c = is->get();
-    }
+      c = is->peek();
+    } while (std::isalnum(c) || c == '$');
   }
 
   return result;
@@ -135,30 +300,22 @@ bool Parser::forward_is(char c) {
 }
 
 bool Parser::keyword(const char *keyword) {
-  // If keyword ask is "empty" return false...
-  if (keyword[0] == '\0') return false;
-
   bool result = false;
 
-  size_t i = 0;
-  char c = keyword[i];
-  while (forward_if_next_is(c)) {
-    i++;
-    c = keyword[i];
+  StringParsingResult next_literal = literal(keyword);
 
-    if (c == '\0') {
-      result = true;
-      break;
-    }
+  if (next_literal.ok) {
+    // a keyword have to be followed by a separator!
+    result = skip();
   }
 
   return result;
 }
 
-bool Parser::separator() {
+bool Parser::skip() {
   bool result = false;
 
-  while (whitespace() || comment()) {
+  while (!is->eof() && (whitespace() || comment())) {
     result = true;
   }
 
@@ -230,4 +387,4 @@ bool Parser::comment() {
 void Parser::forward() { is->get(); }
 
 void Parser::backward() { is->unget(); }
-}
+}  // namespace ai
