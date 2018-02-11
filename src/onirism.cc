@@ -108,7 +108,8 @@ using namespace llvm;
 }*/
 
 int main(int argc, char **argv) {
-  ai::ast::Program *program = ai::parse_file("misc/examples/Simple.abj");
+  ai::ast::Program *program =
+      ai::parsing::parse_file("misc/examples/Simple.abj");
   std::cerr << "module : " << program->module << " -> "
             << program->top_level_contents.size() << std::endl;
 

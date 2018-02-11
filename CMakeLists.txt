@@ -58,28 +58,28 @@ add_executable(${ABJECT_COMPILER}
 # Common
 set_target_properties(${ABJECT_COMMON} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 # Metamodel Core
 target_link_libraries(${ABJECT_METAMODEL_CORE} ${ABJECT_COMMON})
 set_target_properties(${ABJECT_METAMODEL_CORE} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 # Compiler tools
 target_link_libraries(${ABJECT_COMPILER_TOOLS} tanuki)
 set_target_properties(${ABJECT_COMPILER_TOOLS} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 # Compiler
 target_link_libraries(${ABJECT_COMPILER} ${ABJECT_COMPILER_TOOLS})
 set_target_properties(${ABJECT_COMPILER} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 # Runtime
@@ -90,7 +90,7 @@ add_library(${ABJECT_RUNTIME}
 target_link_libraries(${ABJECT_RUNTIME} ${ABJECT_METAMODEL_CORE})  # ${ABJECT_COMPILER_TOOLS}
 set_target_properties(${ABJECT_RUNTIME} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 
@@ -104,7 +104,7 @@ add_executable(${ABJECT_ONIRISM}
 target_link_libraries(${ABJECT_ONIRISM} ${ABJECT_RUNTIME} ${ABJECT_COMPILER_TOOLS} LLVM)  # ${ABJECT_COMPILER_TOOLS}
 set_target_properties(${ABJECT_ONIRISM} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 # Lethargy
@@ -119,5 +119,5 @@ add_executable(${ABJECT_LETHARGY}
 target_link_libraries(${ABJECT_LETHARGY} ${ABJECT_RUNTIME})  # ${ABJECT_COMPILER_TOOLS}
 set_target_properties(${ABJECT_LETHARGY} PROPERTIES
     LINKER_LANGUAGE CXX
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )

@@ -32,6 +32,11 @@ struct Define : public TopLevelContent {
   unique<Code> code;
 };
 
+struct Code {
+  std::vector<unique<Statement>> statements;
+};
+
+// Statements
 struct Statement {};
 
 struct Empty : public Statement {};
@@ -51,9 +56,14 @@ struct Assignment : public Statement {
   unique<Value> value;
 };
 
+struct Return : public Statement {
+  unique<Value> value;
+};
+
+// Values
 struct Value {};
 
-struct PrimitiveValue {
+struct PrimitiveValue : public Value {
   /*
    * isInt...
    */
@@ -73,6 +83,8 @@ struct ArrayValue : public PrimitiveValue {
 
 struct Type {};
 
+struct VoidType : public Type {};
+
 struct ArrayType : public Type {
   unique<Type> of;
   size_t length;
@@ -83,14 +95,20 @@ struct PrimitiveType : public Type {};
 
 struct StringType : public PrimitiveType {};
 
-struct Signature {
-  std::string name;
-  std::vector<std::tuple<unique<Type>, std::string, unique<Value>>> params;
-  bool variadic;
-};
+struct I32Type : public PrimitiveType {};
 
-struct Code {
-  std::vector<unique<Statement>> statements;
+struct Signature {
+  struct Argument {
+    unique<Type> type;
+    std::string alias;
+    std::string identifier;
+    unique<Value> value;
+  };
+
+  std::string identifier;
+  std::vector<Argument> params;
+  unique<Type> ret;
+  bool variadic;
 };
 }  // namespace ast
 }  // namespace ai

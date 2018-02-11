@@ -1,13 +1,15 @@
 module Simple
 
-define String[]::main() {
-    /*"Hello world"=>Print();
+define fib#i32 n#i32 {
+    //"Hello world"=>Print();
 
-    return 0;*/
+    return 20;
 }
 
-define String::foo() {
+define String[]::main#i32 {
     /*"Hello world"=>Print();
+
+    let a#i32 = 5, chien#Animal;
 
     return 0;*/
 }

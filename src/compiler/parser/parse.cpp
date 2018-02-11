@@ -12,11 +12,39 @@
 #include "compiler/parser/ast.h"
 #include "compiler/parser/diagnostic.h"
 
-namespace ai {
+namespace ai::parsing {
 template <typename T>
 struct ParsingResult {
-  bool ok = false;
+  bool ok;
   T result;
+
+  ParsingResult() : ok(false) {}
+  ParsingResult(T result) : ok(true), result(result) {}
+
+  template <typename S>
+  ParsingResult<T> &operator=(const ParsingResult<S> &other) {
+    static_assert(std::is_base_of<std::remove_pointer_t<T>,
+                                  std::remove_pointer_t<S>>::value,
+                  "You can assign only subtype");
+
+    this->ok = other.ok;
+    if (other.ok) {
+      this->result = other.result;
+    }
+
+    return *this;
+  }
+
+  template <typename S>
+  operator ParsingResult<S>() {
+    static_assert(std::is_base_of<std::remove_pointer_t<S>,
+                                  std::remove_pointer_t<T>>::value,
+                  "You can assign only subtype");
+
+    return ParsingResult<S>(result);
+  }
+
+  operator bool() { return ok; }
 };
 
 typedef ParsingResult<std::string> StringParsingResult;
@@ -33,15 +61,35 @@ struct Parser {
   ast::Program *TryToParse();
 
   ParsingResult<ast::TopLevelContent *> top_level_content();
+  ParsingResult<ast::Define *> define();
   ParsingResult<ast::Type *> type();
+  ParsingResult<ast::Type *> type_namespace();
   ParsingResult<ast::Signature *> signature();
+  ast::Code *code();
+
+  // Statements
+  ParsingResult<ast::Return *> ret();
+
+  // Values
+  ParsingResult<ast::Value *> value();
+  ParsingResult<ast::Int32Value *> i32_value();
+
   StringParsingResult module();
   StringParsingResult literal(const std::string &lit);
   StringParsingResult identifier();
+  StringParsingResult alias();
 
   bool next_is(char c);
   bool forward_if_next_is(char c);
   bool forward_is(char c);
+  bool next_is_number();
+  bool forward_if_next_is_number();
+  bool forward_is_number();
+
+  bool next_is_between(char c1, char c2);
+  bool forward_if_next_is_betweek(char c1, char c2);
+  bool forward_is_between(char c1, char c2);
+
   // If "keyword" can be read return true and move forward the cursor
   // otherwise don't move the cursor and return false
   bool keyword(const char *keyword);
@@ -52,8 +100,22 @@ struct Parser {
   bool comment();
 
   // forward for one character
-  void forward();
+  char forward();
   void backward();
+
+  template <typename T>
+  ParsingResult<T> fail() {
+    ParsingResult<T> result;
+    result.ok = false;
+
+    return result;
+  }
+
+  std::stack<typename std::istream::pos_type> save_points;
+
+  void save();
+  void restaure();
+  void valid();
 };
 
 ast::Program *parse_from_stream(std::istream *is, Diagnostic *diagnostic) {
@@ -99,6 +161,8 @@ ast::Program *Parser::TryToParse() {
   ParsingResult<ast::TopLevelContent *> next_top_level_content =
       top_level_content();
   while (next_top_level_content.ok) {
+    skip();
+
     result->top_level_contents.emplace_back(next_top_level_content.result);
 
     next_top_level_content = top_level_content();
@@ -108,27 +172,34 @@ ast::Program *Parser::TryToParse() {
 };
 
 ParsingResult<ast::TopLevelContent *> Parser::top_level_content() {
-  ParsingResult<ast::TopLevelContent *> result;
+  if (auto result = define()) return result;
+
+  return fail<ast::TopLevelContent *>();
+}
+
+ParsingResult<ast::Define *> Parser::define() {
+  ParsingResult<ast::Define *> result;
 
   if (keyword("define")) {
+    ParsingResult<ast::Type *> next_type = type_namespace();
+
+    ParsingResult<ast::Signature *> next_signature = signature();
+    if (!next_signature.ok) return result;
+
+    if (!forward_if_next_is('{')) return result;
+
+    ast::Code *next_code = code();
+
+    if (!forward_if_next_is('}')) return result;
+
     ast::Define *define = new ast::Define;
 
     result.ok = true;
     result.result = define;
 
-    ParsingResult<ast::Type *> next_type = type();
-    if (next_type.ok) define->on.reset(next_type.result);
-
-    StringParsingResult quad_collon = literal("::");
-
-    ParsingResult<ast::Signature *> next_signature = signature();
-    if (next_signature.ok) define->signature.reset(next_signature.result);
-
-    skip();
-    forward_if_next_is('{');
-    skip();
-    forward_if_next_is('}');
-    skip();
+    if (next_type) define->on.reset(next_type.result);
+    define->signature.reset(next_signature.result);
+    define->code.reset(next_code);
   }
 
   return result;
@@ -144,6 +215,10 @@ ParsingResult<ast::Type *> Parser::type() {
     if (next_identifier.result == "String") {
       result_type = new ast::StringType;
     }
+
+    if (next_identifier.result == "i32") {
+      result_type = new ast::I32Type;
+    }
   }
 
   if (result_type) {
@@ -151,7 +226,6 @@ ParsingResult<ast::Type *> Parser::type() {
       forward();
 
       // parse digit...
-
       if (forward_if_next_is(']')) {
         ast::ArrayType *array = new ast::ArrayType;
         array->of.reset(result_type);
@@ -170,70 +244,172 @@ ParsingResult<ast::Type *> Parser::type() {
   return result;
 }
 
+/**
+ * @brief type_namespace
+ * @return
+ *
+ * Try to parse <type>::
+ */
+ParsingResult<ast::Type *> Parser::type_namespace() {
+  save();
+
+  ParsingResult<ast::Type *> result;
+
+  ParsingResult<ast::Type *> ntype = type();
+  if (ntype && literal("::")) {
+    valid();
+
+    result = ntype;
+  } else {
+    restaure();
+  }
+
+  return result;
+}
+
 ParsingResult<ast::Signature *> Parser::signature() {
   ParsingResult<ast::Signature *> result;
 
   StringParsingResult next_identifier = identifier();
   if (!next_identifier.ok) return result;
 
-  std::cerr << ">> " << next_identifier.result << std::endl;
+  skip();
+
+  ast::Type *return_type;
+  if (forward_if_next_is('#')) {
+    ParsingResult<ast::Type *> preturn_type = type();
+    if (!preturn_type) return fail<ast::Signature *>();
+
+    return_type = preturn_type.result;
+  } else {
+    return_type = new ast::VoidType();
+  }
 
   skip();
 
-  if (!forward_if_next_is('(')) return result;
+  std::vector<std::tuple<std::string, std::string, ast::Type *>> list;
 
-  std::cerr << "b1" << std::endl;
-
-  skip();
-
-  bool guess;
-
-  std::vector<std::tuple<std::string, ast::Type *>> list;
+  bool fallback = false;
 
   do {
-    guess = false;
+    if (fallback) {
+      // We do a loop without consume anything, try to consume one
+      forward();
+    }
 
-    StringParsingResult next_identifier = identifier();
+    fallback = true;
 
-    if (next_identifier.ok) {
+    std::string ralias;
+    std::string ridentifier;
+
+    StringParsingResult palias = alias();
+
+    if (palias) {
       skip();
 
-      if (forward_if_next_is(':')) {
-        skip();
+      ralias = palias.result;
+    }
 
-        ParsingResult<ast::Type *> next_type = type();
-        if (next_type.ok) {
-          list.push_back(
-              std::make_tuple(next_identifier.result, next_type.result));
+    StringParsingResult pidentifier = identifier();
 
-          skip();
+    if (pidentifier) {
+      skip();
 
-          if (forward_if_next_is(',')) {
-            skip();
+      ridentifier = pidentifier.result;
 
-            guess = true;
-          }
-        }
+      if (forward_if_next_is('#')) {
+        ParsingResult<ast::Type *> ptype = type();
+        if (!ptype) throw "An argument in not typed";
+
+        list.push_back(std::make_tuple(ralias, ridentifier, ptype.result));
+
+        fallback = false;
       }
     }
-  } while (guess);
 
-  if (forward_if_next_is(')')) {
-    ast::Signature *signature = new ast::Signature;
-    signature->name = next_identifier.result;
+    skip();
+  } while (!next_is('{'));
 
-    for (const std::tuple<std::string, ast::Type *> &l : list) {
-      signature->params.emplace_back();
+  ast::Signature *signature = new ast::Signature;
+  signature->identifier = next_identifier.result;
+  signature->ret.reset(return_type);
 
-      std::get<0>(signature->params.back()).reset(std::get<1>(l));
-      std::get<1>(signature->params.back()) = std::get<0>(l);
-    }
+  for (const std::tuple<std::string, std::string, ast::Type *> &l : list) {
+    signature->params.emplace_back();
 
-    result.ok = true;
-    result.result = signature;
+    signature->params.back().type.reset(std::get<2>(l));
+    signature->params.back().alias = std::get<0>(l);
+    signature->params.back().identifier = std::get<1>(l);
+  }
+
+  result.ok = true;
+  result.result = signature;
+
+  return result;
+}
+
+ast::Code *Parser::code() {
+  ast::Code *result = new ast::Code();
+
+loop:
+  skip();
+
+  if (ParsingResult<ast::Return *> st = ret()) {
+    result->statements.emplace_back(st.result);
+    goto loop;
   }
 
   return result;
+}
+
+ParsingResult<ast::Return *> Parser::ret() {
+  // save();
+
+  ParsingResult<ast::Return *> result;
+
+  if (keyword("return")) {
+    ParsingResult<ast::Value *> next_value = value();
+    if (next_value.ok) {
+      skip();
+
+      if (forward_if_next_is(';')) {
+        //   valid();
+
+        ast::Return *ret = new ast::Return;
+
+        ret->value.reset(next_value.result);
+
+        result.ok = true;
+        result.result = ret;
+      }
+    }
+  }
+
+  //  if (!result.ok) restaure();
+
+  return result;
+}
+
+ParsingResult<ast::Value *> Parser::value() {
+  if (auto result = i32_value()) return result;
+
+  return fail<ast::Value *>();
+}
+
+ParsingResult<ast::Int32Value *> Parser::i32_value() {
+  std::string following;
+
+  while (next_is_number()) {
+    following += forward();
+  }
+
+  if (following.empty()) return fail<ast::Int32Value *>();
+
+  ast::Int32Value *val = new ast::Int32Value;
+
+  val->value = std::stoi(following);
+
+  return val;
 }
 
 StringParsingResult Parser::literal(const std::string &lit) {
@@ -279,6 +455,29 @@ StringParsingResult Parser::identifier() {
   return result;
 }
 
+/**
+ * @brief alias
+ * @return
+ *
+ * An identifier directli followed by ":"
+ */
+StringParsingResult Parser::alias() {
+  save();
+
+  StringParsingResult result = fail<std::string>();
+
+  StringParsingResult pidentifier = identifier();
+  if (pidentifier && forward_if_next_is(':')) {
+    valid();
+
+    result = pidentifier;
+  } else {
+    restaure();
+  }
+
+  return result;
+}
+
 bool Parser::next_is(char c) {
   if (is->eof()) return false;
 
@@ -297,6 +496,52 @@ bool Parser::forward_is(char c) {
   if (is->eof()) return false;
 
   return (is->get() == c);
+}
+
+bool Parser::next_is_number() {
+  bool result = next_is_between('0', '9');
+
+  return result;
+}
+
+bool Parser::forward_if_next_is_number() {
+  bool result = next_is_number();
+
+  if (result) forward();
+
+  return result;
+}
+
+bool Parser::forward_is_number() {
+  bool result = next_is_between('0', '9');
+
+  if (!is->eof()) is->get();
+
+  return result;
+}
+
+bool Parser::next_is_between(char c1, char c2) {
+  if (is->eof()) return false;
+
+  char c = is->peek();
+
+  return ((c >= c1) && (c <= c2));
+}
+
+bool Parser::forward_if_next_is_betweek(char c1, char c2) {
+  bool result = next_is_between(c1, c2);
+
+  if (result) forward();
+
+  return result;
+}
+
+bool Parser::forward_is_between(char c1, char c2) {
+  if (is->eof()) return false;
+
+  char c = is->get();
+
+  return ((c >= c1) && (c <= c2));
 }
 
 bool Parser::keyword(const char *keyword) {
@@ -384,7 +629,22 @@ bool Parser::comment() {
   return result;
 }
 
-void Parser::forward() { is->get(); }
+char Parser::forward() { return is->get(); }
 
 void Parser::backward() { is->unget(); }
-}  // namespace ai
+
+void Parser::save() { save_points.push(is->tellg()); }
+
+void Parser::restaure() {
+  assert(!save_points.empty());
+
+  is->seekg(save_points.top());
+  save_points.pop();
+}
+
+void Parser::valid() {
+  assert(!save_points.empty());
+
+  save_points.pop();
+}
+}  // namespace ai::parsing
