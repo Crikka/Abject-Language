@@ -9,10 +9,10 @@
 
 namespace ai {
 namespace rt {
-class OnirismBackend : public Backend {
+class LLVMBackend : public Backend {
  public:
-  OnirismBackend();
-  virtual ~OnirismBackend();
+  LLVMBackend();
+  virtual ~LLVMBackend();
 
   int RunMain(Function *fct, const std::vector<std::string> &args) override;
 

@@ -1,4 +1,4 @@
-#include "execution/onirism/backend.h"
+#include "execution/llvm/backend.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -44,7 +44,7 @@ int print(const char *msg) {
 
 namespace ai {
 namespace rt {
-struct OnirismInfo {
+struct LLVMInfo {
   llvm::LLVMContext *context;
   llvm::Module *module;
   Metamodel *mm;
@@ -55,12 +55,11 @@ struct OnirismInfo {
   std::vector<llvm::Function *> fcts;
 };
 
-OnirismBackend::OnirismBackend() {}
+LLVMBackend::LLVMBackend() {}
 
-OnirismBackend::~OnirismBackend() {}
+LLVMBackend::~LLVMBackend() {}
 
-int OnirismBackend::RunMain(Function *fct,
-                            const std::vector<std::string> &args) {
+int LLVMBackend::RunMain(Function *fct, const std::vector<std::string> &args) {
   llvm::InitializeNativeTarget();
   llvm::InitializeNativeTargetAsmPrinter();
 
@@ -70,7 +69,7 @@ int OnirismBackend::RunMain(Function *fct,
   std::unique_ptr<llvm::Module> owner(new llvm::Module("main", context));
   llvm::Module *module = owner.get();
 
-  OnirismInfo info;
+  LLVMInfo info;
 
   info.context = &context;
   info.module = module;
@@ -96,9 +95,9 @@ int OnirismBackend::RunMain(Function *fct,
   llvm::errs() << "We just constructed this LLVM module:\n\n---------\n"
                << *module;
 
-  llvm::errs() << "verifying... ";
+  llvm::errs() << "verifying...\n";
   if (llvm::verifyModule(*module, &llvm::errs())) {
-    llvm::errs() << ": Error constructing function!\n";
+    llvm::errs() << "Error constructing function!\n";
     return 1;
   }
 
@@ -110,7 +109,7 @@ int OnirismBackend::RunMain(Function *fct,
 struct ExecutorVisitor : Visitor {
   using Visitor::callback;
 
-  ExecutorVisitor(OnirismInfo *info, Function *function)
+  ExecutorVisitor(LLVMInfo *info, Function *function)
       : info(info),
         metamodel(info->mm),
         context(*info->context),
@@ -152,7 +151,7 @@ struct ExecutorVisitor : Visitor {
     }
   }
 
-  OnirismInfo *info;
+  LLVMInfo *info;
   Metamodel *metamodel;
   llvm::LLVMContext &context;
   llvm::Module *module;
@@ -236,7 +235,7 @@ struct ExecutorVisitor : Visitor {
   }
 };
 
-llvm::Function *OnirismInfo::GetFunction(size_t fct_id) {
+llvm::Function *LLVMInfo::GetFunction(size_t fct_id) {
   if (fct_id >= fcts.size()) {
     fcts.resize(fct_id + 1, nullptr);
   }
@@ -251,7 +250,7 @@ llvm::Function *OnirismInfo::GetFunction(size_t fct_id) {
   return fcts[fct_id];
 }
 
-llvm::Type *OnirismInfo::GetType(Model *model) {
+llvm::Type *LLVMInfo::GetType(Model *model) {
   if (model->kind() == Model::kI32) return llvm::Type::getInt32Ty(*context);
 
   throw "fail!";

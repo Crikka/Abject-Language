@@ -62,7 +62,7 @@
 #include "metamodel/cfg/identifier.h"
 #include "metamodel/cfg/statements.h"
 
-#include "execution/onirism/backend.h"
+#include "execution/llvm/backend.h"
 
 using namespace llvm;
 
@@ -113,8 +113,6 @@ int main(int argc, char **argv) {
   std::cerr << "module : " << program->module << " -> "
             << program->top_level_contents.size() << std::endl;
 
-  return 0;
-
   /*ai::Code *code = new ai::Code;
   code->Push(new ai::StringLiteral(2, "foo"));
   code->Push(new ai::Int32Literal(1, 5));
@@ -139,7 +137,7 @@ int main(int argc, char **argv) {
   domain.Let(id) = 6;
   domain.Let(id) < 6;*/
 
-  /*ai::Code *code = new ai::Code;
+  ai::Code *code = new ai::Code;
   ai::Block *entry = code->EntryBlock();
   entry->Push(new ai::Call(1, 0, {}));
   entry->Push(new ai::Int32Literal(1, 0));
@@ -163,8 +161,8 @@ int main(int argc, char **argv) {
   ai::Function *id = ai::model()->AddFunction(ai::I32::Instance(), code2, "id");
   id->locals(1);
 
-  ai::rt::OnirismBackend backend;
+  ai::rt::LLVMBackend backend;
   int result = backend.RunMain(main, {});
 
-  return result;*/
+  return result;
 }

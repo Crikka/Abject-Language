@@ -98,7 +98,7 @@ set_target_properties(${ABJECT_RUNTIME} PROPERTIES
 add_executable(${ABJECT_ONIRISM}
   src/onirism.cc
 
-  src/execution/onirism/backend.cc
+  src/execution/llvm/backend.cc
 )
 
 target_link_libraries(${ABJECT_ONIRISM} ${ABJECT_RUNTIME} ${ABJECT_COMPILER_TOOLS} LLVM)  # ${ABJECT_COMPILER_TOOLS}
