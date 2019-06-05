@@ -1,7 +1,5 @@
 project(Abject)
 
-add_subdirectory(vendor/tanuki)
-include_directories(vendor/tanuki)
 include_directories(src)
 
 # Names
@@ -69,7 +67,7 @@ set_target_properties(${ABJECT_METAMODEL_CORE} PROPERTIES
 )
 
 # Compiler tools
-target_link_libraries(${ABJECT_COMPILER_TOOLS} tanuki)
+target_link_libraries(${ABJECT_COMPILER_TOOLS})
 set_target_properties(${ABJECT_COMPILER_TOOLS} PROPERTIES
     LINKER_LANGUAGE CXX
     CXX_STANDARD 17
